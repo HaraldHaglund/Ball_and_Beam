@@ -1,0 +1,20 @@
+
+**can be handeled by Popen in python**
+setInnerParameters - called by python program to change struct in c monitor
+setOuterParameters - called by python program to change struct in c monitor
+setMode - called by python program to change struct in c monitor
+setRef - called by python program to change struct in c monitor
+shutDown - called by python to pass data to c
+
+**can be handeled by Popen in python also**
+getInnerParameters - called by python to get information from c monitor
+getOuterParameters - called by python to get information from c monitor
+getMode - called by python to get information from c monitor
+
+
+**These can be handeled with popen in c**
+putMeassurementData - called by c program to pass data to python
+putControlData - called by c program to pass data to python
+start(opcom) - called by c program to pass data to python
+start(regul) - called by c program to pass data to python
+setRegul - called by c program to pass data to python
