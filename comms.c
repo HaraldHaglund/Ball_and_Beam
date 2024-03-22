@@ -11,7 +11,7 @@
  */
 int putMeassurementData(double t, double yRef, double y)
 {
-    char* path = "./comms/script_to_be_run";
+    char* path = "python3 ./comms/putMeassurementData.py";
     double data[] = {t, yRef, y};
     return write(path, data, 3);
 }
@@ -24,23 +24,29 @@ int putMeassurementData(double t, double yRef, double y)
  */
 int putControlData(double t, double u)
 {
-    char* path = "./comms/script_to_be_run";
+    char* path = "python3 ./comms/putControlData.py";
     double data[] = {t, u};
     return write(path, data, 2);
 }
 
-//idk if this should be implemented here
+/**
+ * @brief Starts Opcom
+ * @return 0 if no error was encountered, otherwise non-0
+ */
 int startOpcom()
 {
-    char* path = "./comms/script_to_be_run";
+    char* path = "python3 ./comms/startOpcom.py";
     double* data;
     return write(path, data, 0);
 }
 
-//idk if this should be implemented here or not
+/**
+ * @brief Starts Regul
+ * @return 0 if no error was encountered, otherwise non-0
+ */
 int startRegul()
 {
-    char* path = "./comms/script_to_be_run";
+    char* path = "python3 ./comms/startRegul.py";
     double* data;
     return write(path, data, 0);
 }

@@ -17,4 +17,3 @@ putMeassurementData - called by c program to pass data to python
 putControlData - called by c program to pass data to python
 start(opcom) - called by c program to pass data to python
 start(regul) - called by c program to pass data to python
-setRegul - called by c program to pass data to python
