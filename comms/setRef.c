@@ -1,10 +1,10 @@
 #include<stdio.h>
-#include "../test_struct.h" //change to Refgen struct later
+#include "../refGenMonitor.h"
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
 #define buff_size 1024
-#define SHM_SIZE sizeof(struct temp_struct)
+#define SHM_SIZE sizeof(struct refGenMonitor)
 
 int main()
 {
@@ -12,19 +12,38 @@ int main()
 
     if(fgets(buffer, buff_size, stdin) !=NULL)
     {
-        double d;
-        sscanf(buffer, "%lf", &d);
+        double ref;
+        sscanf(buffer, "%lf", &ref);
 
-        key_t key = ftok("/tmp", "RefGen");
+        key_t key = ftok("/tmp", "REFGEN");
+        if(key == -1)
+        {
+            perror("Error, ftok:");
+            return 1;
+        }
 
         int shmid = shmget(key, SHM_SIZE, 0666);
+        if(shmid == -1)
+        {
+            perror("Error, shmget: ");
+            return 1;
+        }
 
-        struct temp_struct* ts = shmat(shmid, NULL, 0);
+        struct refGenMonitor* rgm = shmat(shmid, NULL, 0);
 
 
         //need to make sure we have monitor lock here before changing value
-        ts->ref = d;
+        rgm->ref = ref;
 
-        shmdt(ts);
+        if(shmdt(rgm) == -1)
+        {
+            perror("Error, shmdt: ");
+            return 1;
+        }
+    } 
+    else
+    {
+        fprintf(stderr, "Error: Failed to read input from stdin.\n");
+        return 1;
     }
 }
