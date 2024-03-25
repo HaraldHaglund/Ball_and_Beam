@@ -16,7 +16,6 @@ int main()
         double K, Ti, Td, Tr, N, Beta, H;
         sscanf(buffer, "%lf", &K);
         sscanf(buffer, "%lf", &Ti);
-        sscanf(buffer, "%lf", &Ti);
         sscanf(buffer, "%lf", &Td);
         sscanf(buffer, "%lf", &Tr);
         sscanf(buffer, "%lf", &N);
