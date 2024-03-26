@@ -4,7 +4,7 @@
 #include <sys/shm.h>
 
 #define buff_size 1024
-#define SHM_SIZE sizeof(struct mode_Monitor)
+#define SHM_SIZE sizeof(struct mode_monitor)
 
 int main()
 {
@@ -29,7 +29,7 @@ int main()
             return 1;
         }
 
-        struct mode_Monitor* mm = shmat(shmid, NULL, 0);
+        struct mode_monitor* mm = shmat(shmid, NULL, 0);
 
 
         //need to make sure we have monitor lock here before changing value

@@ -4,7 +4,7 @@
 #include <sys/shm.h>
 
 #define buff_size 1024
-#define SHM_SIZE sizeof(struct refGenMonitor)
+#define SHM_SIZE sizeof(struct refGen_monitor)
 
 int main()
 {
@@ -29,7 +29,7 @@ int main()
             return 1;
         }
 
-        struct refGenMonitor* rgm = shmat(shmid, NULL, 0);
+        struct refGen_monitor* rgm = shmat(shmid, NULL, 0);
 
 
         //need to make sure we have monitor lock here before changing value
