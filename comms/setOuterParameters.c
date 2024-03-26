@@ -1,6 +1,6 @@
 //sets parameters of the outer controller
 #include<stdio.h>
-#include "../PIDMonitor.h"
+#include "../monitors/PIDMonitor.h"
 #include <sys/ipc.h>
 #include <sys/shm.h>
 

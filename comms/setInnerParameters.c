@@ -1,7 +1,7 @@
 //set parameters of the inner controller
 #include <stdio.h>
 #include <stdbool.h>
-#include "../PIMonitor.h"
+#include "../monitors/PIMonitor.h"
 #include <sys/ipc.h>
 #include <sys/shm.h>
 

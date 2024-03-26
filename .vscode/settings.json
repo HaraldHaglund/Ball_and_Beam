@@ -1,9 +1,5 @@
 {
     "files.associations": {
-        "test.h": "c",
-        "stdio.h": "c",
-        "ipc.h": "c",
-        "refgenmonitor.h": "c",
         "shm.h": "c"
     }
 }

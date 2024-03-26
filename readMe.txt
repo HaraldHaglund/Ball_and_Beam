@@ -1,3 +1,8 @@
+*****Comms*****
+When you want to use commmunication between c and python import comms.h or comms.py from comms and use functions like you normaly would
+*****
+
+
 *****Monitor creation and handling*****
 When creating a monitor it should be done by declaring a struct in a .h file. for example:
 

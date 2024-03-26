@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include "../modeMonitor.h"
+#include "../monitors/modeMonitor.h"
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
