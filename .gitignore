@@ -15,6 +15,7 @@ build/
 # Compiled executable files
 *.exe
 *.out
+*.so
 
 # Temporary files
 *.tmp
