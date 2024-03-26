@@ -1,0 +1,21 @@
+# Compiled C++ files
+bin/
+
+# Compiled Python files
+*.pyc
+__pycache__/
+
+# CMake build directory
+build/
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# Compiled executable files
+*.exe
+*.out
+
+# Temporary files
+*.tmp
+*.log
