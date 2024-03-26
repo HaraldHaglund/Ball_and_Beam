@@ -29,8 +29,9 @@ def shutDown():
 def write(path, data):
     proc = subprocess.Popen([path], stdin=subprocess.PIPE)
     for send in data:
-        #need to send \n also here
-        proc.stdin.write(send.encode())
+        send_str = str(send) + ' '
+        print(send_str)
+        proc.stdin.write(send_str.encode())
     
     proc.stdin.close()
     proc.wait()

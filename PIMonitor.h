@@ -1,7 +1,9 @@
 #ifndef PIMONITOR_H
 #define PIMONITOR_H
 
-//use key "PI" when accessing shared memory
+#include <stdbool.h>
+
+//use key 'I' when accessing shared memory
 struct PI_monitor
 {
     volatile double K;
@@ -9,6 +11,7 @@ struct PI_monitor
     volatile double Tr;
     volatile double Beta;
     volatile double H;
+    volatile bool IntegratorOn;
 };
 
 #endif

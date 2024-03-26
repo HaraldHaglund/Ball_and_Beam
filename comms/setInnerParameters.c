@@ -1,5 +1,6 @@
 //set parameters of the inner controller
-#include<stdio.h>
+#include <stdio.h>
+#include <stdbool.h>
 #include "../PIMonitor.h"
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -14,13 +15,10 @@ int main()
     if(fgets(buffer, buff_size, stdin) !=NULL)
     {
         double K, Ti, Td, Tr, N, Beta, H;
-        sscanf(buffer, "%lf", &K);
-        sscanf(buffer, "%lf", &Ti);
-        sscanf(buffer, "%lf", &Tr);
-        sscanf(buffer, "%lf", &Beta);
-        sscanf(buffer, "%lf", &H);
+        int integratorOn;
+        sscanf(buffer, "%lf %lf %d %lf %lf %lf", &Beta, &H, &integratorOn, &K, &Ti, &Tr);
 
-        key_t key = ftok("/tmp", "PI");
+        key_t key = ftok("/tmp", 'I');
         if(key == -1)
         {
             perror("Error, ftok:");
@@ -42,6 +40,7 @@ int main()
         PI->Tr = Tr;
         PI->Beta = Beta;
         PI->H = H;
+        PI->IntegratorOn = (bool) integratorOn;
 
         if(shmdt(PI) == -1)
         {

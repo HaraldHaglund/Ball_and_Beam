@@ -15,7 +15,7 @@ struct example_struct* ex_st = shmat(shmid, NULL, 0);
 ex_st can now be used as a normal struct: ex_st->example = ...;
 
 For generating keys use:
-"ModeMonitor" for ModeMonitor
-"PI" for PI-monitor(inner controller)
-"PID" for PID-monitor(outer controller)
-"RefGen" for monitor in RefGen
+'M' for ModeMonitor
+'I for PI-monitor(inner controller)
+'D' for PID-monitor(outer controller)
+'R for monitor in RefGen

@@ -15,7 +15,7 @@ int main()
         double ref;
         sscanf(buffer, "%lf", &ref);
 
-        key_t key = ftok("/tmp", "REFGEN");
+        key_t key = ftok("/tmp", 'R');
         if(key == -1)
         {
             perror("Error, ftok:");

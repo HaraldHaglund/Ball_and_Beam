@@ -14,15 +14,10 @@ int main()
     if(fgets(buffer, buff_size, stdin) !=NULL)
     {
         double K, Ti, Td, Tr, N, Beta, H;
-        sscanf(buffer, "%lf", &K);
-        sscanf(buffer, "%lf", &Ti);
-        sscanf(buffer, "%lf", &Td);
-        sscanf(buffer, "%lf", &Tr);
-        sscanf(buffer, "%lf", &N);
-        sscanf(buffer, "%lf", &Beta);
-        sscanf(buffer, "%lf", &H);
+        int integratorOn;
+        sscanf(buffer, "%lf %lf %d %lf %lf %lf %lf %lf", &Beta, &H, &integratorOn, &K, &N, &Td, &Ti, &Tr);
 
-        key_t key = ftok("/tmp", "PID");
+        key_t key = ftok("/tmp", 'D');
         if(key == -1)
         {
             perror("Error, ftok:");
@@ -46,6 +41,7 @@ int main()
         PID->N = N;
         PID->Beta = Beta;
         PID->H = H;
+        PID->integratorOn = (bool) integratorOn;
 
         if(shmdt(PID) == -1)
         {

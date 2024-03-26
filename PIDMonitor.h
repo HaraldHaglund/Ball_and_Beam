@@ -1,7 +1,9 @@
 #ifndef PIDMONITOR_H
 #define PIDMONITOR_H
 
-//Use key "PID" when accessing shjared memory
+#include <stdbool.h>
+
+//Use key 'D' when accessing shjared memory
 struct PID_monitor
 {
     volatile double K;
@@ -11,6 +13,7 @@ struct PID_monitor
     volatile double N;
     volatile double Beta;
     volatile double H;
+    volatile bool integratorOn;
 };
 
 #endif
