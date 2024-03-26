@@ -1,5 +1,8 @@
-import subprocess
+import ctypes
 
+lib = ctypes.CDLL('../../bin/reciever.so')
+
+#fix these functions so they have correct path
 def setInnerParameters(beta, H, integratorOn, K, Ti, Tr):
     path = "./comms/setInnerParameters"
     data = [beta, H, integratorOn, K, Ti, Tr]

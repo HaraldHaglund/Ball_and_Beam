@@ -1,10 +1,11 @@
+//sets parameters of the outer controller
 #include<stdio.h>
-#include "../monitors/modeMonitor.h"
+#include "../../include/PIDMonitor.h"
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
 #define buff_size 1024
-#define SHM_SIZE sizeof(struct mode_monitor)
+#define SHM_SIZE sizeof(struct PID_monitor)
 
 int main()
 {
@@ -12,10 +13,11 @@ int main()
 
     if(fgets(buffer, buff_size, stdin) !=NULL)
     {
-        int mode;
-        sscanf(buffer, "%d", &mode);
+        double K, Ti, Td, Tr, N, Beta, H;
+        int integratorOn;
+        sscanf(buffer, "%lf %lf %d %lf %lf %lf %lf %lf", &Beta, &H, &integratorOn, &K, &N, &Td, &Ti, &Tr);
 
-        key_t key = ftok("/tmp", 'M');
+        key_t key = ftok("/tmp", 'D');
         if(key == -1)
         {
             perror("Error, ftok:");
@@ -29,18 +31,24 @@ int main()
             return 1;
         }
 
-        struct mode_monitor* mm = shmat(shmid, NULL, 0);
-
+        struct PID_monitor* PID = shmat(shmid, NULL, 0);
 
         //need to make sure we have monitor lock here before changing value
-        mm->mode = mode;
+        PID->K = K;
+        PID->Ti = Ti;
+        PID->Td = Td;
+        PID->Tr = Tr;
+        PID->N = N;
+        PID->Beta = Beta;
+        PID->H = H;
+        PID->integratorOn = (bool) integratorOn;
 
-        if(shmdt(mm) == -1)
+        if(shmdt(PID) == -1)
         {
             perror("Error, shmdt: ");
             return 1;
         }
-    } 
+    }
     else
     {
         fprintf(stderr, "Error: Failed to read input from stdin.\n");
