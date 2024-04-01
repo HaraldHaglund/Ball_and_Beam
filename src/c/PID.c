@@ -1,10 +1,8 @@
-#ifndef PIDMONITOR_H
-#define PIDMONITOR_H
+#include <stdlib.h>
+#include <pthread.h>
+#include "../../include/PID.h"
 
-#include <stdbool.h>
-
-//Use key 'D' when accessing shared memory
-struct PID_monitor
+typedef struct PID_t
 {
     volatile double K;
     volatile double Ti;
@@ -14,6 +12,4 @@ struct PID_monitor
     volatile double Beta;
     volatile double H;
     volatile bool integratorOn;
-};
-
-#endif
+}PID;
