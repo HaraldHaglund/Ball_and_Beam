@@ -12,4 +12,4 @@ typedef struct PID_t
     volatile double Beta;
     volatile double H;
     volatile bool integratorOn;
-}PID;
+}PID_t;
