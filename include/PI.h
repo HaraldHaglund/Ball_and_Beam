@@ -6,7 +6,20 @@
 #include <stdbool.h>
 
 //use key 'I' when accessing shared memory
-typedef struct PI_t;
+typedef struct PI_t
+{
+    volatile double K;
+    volatile double Ti;
+    volatile double Tr;
+    volatile double Beta;
+    volatile double H;
+    volatile bool integratorOn;
+    volatile double I;
+    volatile double v;
+    volatile double e;
+    pthread_mutex_t mutex;
+} PI_t;
+
 void initialize_PI(PI_t *pi);
 void destroy_PI(PI_t *pi);
 double calculateOutput(PI_t *pi, double y, double yref);

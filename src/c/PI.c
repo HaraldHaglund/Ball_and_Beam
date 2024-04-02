@@ -3,20 +3,6 @@
 #include <stdbool.h>
 #include "../../include/PI.h"
 
-typedef struct PI_t
-{
-    volatile double K;
-    volatile double Ti;
-    volatile double Tr;
-    volatile double Beta;
-    volatile double H;
-    volatile bool integratorOn;
-    volatile double I;
-    volatile double v;
-    volatile double e;
-    pthread_mutex_t mutex;
-} PI_t;
-
 void initialize_PI(PI_t *pi)
 {
     pi->K = 2.2;
