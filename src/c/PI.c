@@ -22,7 +22,7 @@ void destroy_PI(PI_t *pi)
     pthread_mutex_destroy(&(pi->mutex));
 }
 
-double calculateOutput(PI_t *pi, double y, double yref)
+double calculateOutputPI(PI_t *pi, double y, double yref)
 {
     pthread_mutex_lock(&(pi->mutex));
     pi->e = yref - y;
@@ -32,7 +32,7 @@ double calculateOutput(PI_t *pi, double y, double yref)
     return v;
 }
 
-void updateState(PI_t *pi, double u)
+void updateStatePI(PI_t *pi, double u)
 {
     pthread_mutex_lock(&(pi->mutex));
     if (pi->integratorOn)
@@ -46,7 +46,7 @@ void updateState(PI_t *pi, double u)
     pthread_mutex_unlock(&(pi->mutex));
 }
 
-long getHMillis(PI_t *pi)
+long getHMillisPI(PI_t *pi)
 {
     pthread_mutex_lock(&(pi->mutex));
     long h = (long)(pi->H * 1000.0);
@@ -54,7 +54,7 @@ long getHMillis(PI_t *pi)
     return h;
 }
 
-void setParameters(PI_t *pi, double K, double Ti, double Tr, double Beta, double H, bool integratorOn)
+void setParametersPI(PI_t *pi, double K, double Ti, double Tr, double Beta, double H, bool integratorOn)
 {
     pthread_mutex_lock(&(pi->mutex));
     pi->K = K;
@@ -70,7 +70,7 @@ void setParameters(PI_t *pi, double K, double Ti, double Tr, double Beta, double
     pthread_mutex_unlock(&(pi->mutex));
 }
 
-void reset(PI_t *pi)
+void resetPI(PI_t *pi)
 {
     pthread_mutex_lock(&(pi->mutex));
     pi->I = 0.0;

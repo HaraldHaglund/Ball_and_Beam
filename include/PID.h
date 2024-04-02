@@ -28,10 +28,10 @@ typedef struct PID_t
 
 void initialize_pid(PID_t *pid);
 void destroy_PID(PID_t *pi);
-double calculateOutput(PID_t *pid, double y, double yref);
-void updateState(PID_t *pid, double u);
-long getHMillis(PID_t *pid);
-void setParameters(PID_t *pid, double K, double Ti, double Tr, double Td, double Beta, double H, double N, bool integratorOn);
-void reset(PID_t *pid);
+double calculateOutputPID(PID_t *pid, double y, double yref);
+void updateStatePID(PID_t *pid, double u);
+long getHMillisPID(PID_t *pid);
+void setParametersPID(PID_t *pid, double K, double Ti, double Tr, double Td, double Beta, double H, double N, bool integratorOn);
+void resetPID(PID_t *pid);
 
 #endif

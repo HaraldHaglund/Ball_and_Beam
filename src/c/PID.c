@@ -27,7 +27,7 @@ void destroy_PID(PID_t *pi)
     pthread_mutex_destroy(&(pi->mutex));
 }
 
-double calculateOutput(PID_t *pid, double y, double yref)
+double calculateOutputPID(PID_t *pid, double y, double yref)
 {
     pthread_mutex_lock(&(pid->mutex));
     pid->e = yref - y;
@@ -39,7 +39,7 @@ double calculateOutput(PID_t *pid, double y, double yref)
     return v;
 }
 
-void updateState(PID_t *pid, double u)
+void updateStatePID(PID_t *pid, double u)
 {
     pthread_mutex_lock(&(pid->mutex));
     if (pid->integratorOn) {
@@ -50,7 +50,7 @@ void updateState(PID_t *pid, double u)
     pthread_mutex_unlock(&(pid->mutex));
 }
 
-long getHMillis(PID_t *pid)
+long getHMillisPID(PID_t *pid)
 {
     pthread_mutex_lock(&(pid->mutex));
     long h = (long)(pid->H * 1000.0);
@@ -58,7 +58,7 @@ long getHMillis(PID_t *pid)
     return h;
 }
 
-void setParameters(PID_t *pid, double K, double Ti, double Tr, double Td, double Beta, double H, double N, bool integratorOn)
+void setParametersPID(PID_t *pid, double K, double Ti, double Tr, double Td, double Beta, double H, double N, bool integratorOn)
 {
     pthread_mutex_lock(&(pid->mutex));
     pid->K = K;
@@ -78,7 +78,7 @@ void setParameters(PID_t *pid, double K, double Ti, double Tr, double Td, double
     pthread_mutex_unlock(&(pid->mutex));
 }
 
-void reset(PID_t *pid)
+void resetPID(PID_t *pid)
 {
     pthread_mutex_lock(&(pid->mutex));
     pid->I = 0.0;

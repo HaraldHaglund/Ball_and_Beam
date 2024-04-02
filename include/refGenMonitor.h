@@ -2,10 +2,10 @@
 #define REFGENMONIOR_H
 
 //use key 'R' when accesing shared memory
-struct refGen_monitor
+typedef struct ReferenceGenerator_t
 {
     //vad ska vara här?
     volatile double ref;
-};
+}ReferenceGenerator_t;
 
 #endif

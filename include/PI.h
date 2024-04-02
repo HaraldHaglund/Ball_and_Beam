@@ -22,10 +22,10 @@ typedef struct PI_t
 
 void initialize_PI(PI_t *pi);
 void destroy_PI(PI_t *pi);
-double calculateOutput(PI_t *pi, double y, double yref);
-void updateState(PI_t *pi, double u);
-long getHMillis(PI_t *pi);
-void setParameters(PI_t *pi, double K, double Ti, double Tr, double Beta, double H, bool integratorOn);
-void reset(PI_t *pi);
+double calculateOutputPI(PI_t *pi, double y, double yref);
+void updateStatePI(PI_t *pi, double u);
+long getHMillisPI(PI_t *pi);
+void setParametersPI(PI_t *pi, double K, double Ti, double Tr, double Beta, double H, bool integratorOn);
+void resetPI(PI_t *pi);
 
 #endif
