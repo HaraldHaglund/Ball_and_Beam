@@ -20,3 +20,6 @@ build/
 # Temporary files
 *.tmp
 *.log
+
+# Virtual enviroments
+venv/
