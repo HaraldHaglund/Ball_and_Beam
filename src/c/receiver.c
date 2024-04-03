@@ -6,7 +6,7 @@
 #include "../../include/PI.h"
 #include "../../include/PID.h"
 #include "../../include/modeMonitor.h"
-#include "../../include/refGenMonitor.h"
+#include "../../include/ReferenceGenerator.h"
 
 #define SHM_PI_SIZE sizeof(struct PI_t)
 #define SHM_PID_SIZE sizeof(struct PID_t)
