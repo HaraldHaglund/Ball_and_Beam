@@ -99,6 +99,7 @@ void run_regulator(Regulator_t *regulator)
             pthread_mutex_lock(&(regulator->mutex_pid));
 
             u_1 = calculateOutputPID(regulator->pid, y_position, yRef);
+            
             pthread_mutex_lock(&(regulator->mutex_pi));
 
             // y_angle = readInput(analogInAngle); Needs AnalogIn

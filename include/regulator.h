@@ -10,7 +10,7 @@
 #include "PI.h"
 #include "PID.h"
 #include "comms.h"
-#include "refGenMonitor.h"
+#include "ReferenceGenerator.h"
 #include "ModeMonitor.h"
 
 typedef struct Regulator_t
