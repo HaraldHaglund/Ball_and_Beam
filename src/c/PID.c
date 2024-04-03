@@ -84,5 +84,3 @@ void resetPID(PID_t *pid)
     pid->I = 0.0;
     pthread_mutex_unlock(&(pid->mutex));
 }
-
-//Is getParameters() needed here?
