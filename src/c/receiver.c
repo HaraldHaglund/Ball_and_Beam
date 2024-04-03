@@ -2,15 +2,16 @@
 #include <stdbool.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include "../../include/PIMonitor.h"
-#include "../../include/PIDMonitor.h"
+#include <pthread.h>
+#include "../../include/PI.h"
+#include "../../include/PID.h"
 #include "../../include/modeMonitor.h"
 #include "../../include/refGenMonitor.h"
 
-#define SHM_PI_SIZE sizeof(struct PI_monitor)
-#define SHM_PID_SIZE sizeof(struct PID_monitor)
-#define SHM_MODE_SIZE sizeof(struct mode_monitor)
-#define SHM_REF_SIZE sizeof(struct refGen_monitor)
+#define SHM_PI_SIZE sizeof(struct PI_t)
+#define SHM_PID_SIZE sizeof(struct PID_t)
+#define SHM_MODE_SIZE sizeof(struct ModeMonitor_t)
+#define SHM_REF_SIZE sizeof(struct ModeMonitor_t)
 #define PERMS 0666
 
 /**
@@ -39,14 +40,18 @@ int setInnerParameters(double K, double Ti, double Tr, double Beta, double H, in
         return 1;
     }
 
-    struct PI_monitor* PI = shmat(shmid, NULL, 0);
-    //need to make sure we have monitor lock here before changing value
+    struct PI_t* PI = shmat(shmid, NULL, 0);
+    
+    pthread_mutex_lock(&(PI->mutex));
+
     PI->K = K;
     PI->Ti = Ti;
     PI->Tr = Tr;
     PI->Beta = Beta;
     PI->H = H;
-    PI->IntegratorOn = (bool) integratorOn;
+    PI->integratorOn = (bool) integratorOn;
+
+    pthread_mutex_unlock(&(PI->mutex));
 
     if(shmdt(PI) == -1)
     {
@@ -82,14 +87,18 @@ int getInnerParameters(double *K, double *Ti, double *Tr, double *Beta, double *
         return 1;
     }
 
-    struct PI_monitor* PI = shmat(shmid, NULL, 0);
-    //need to make sure we have monitor lock
+    struct PI_t* PI = shmat(shmid, NULL, 0);
+    
+    pthread_mutex_lock(&(PI->mutex));
+
     *K = PI->K;
     *Ti = PI->Ti;
     *Tr = PI->Tr;
     *Beta = PI->Beta;
     *H = PI->H;
-    *integratorOn = PI->IntegratorOn;
+    *integratorOn = PI->integratorOn;
+
+    pthread_mutex_unlock(&(PI->mutex));
 
     if(shmdt(PI) == -1)
     {
@@ -127,9 +136,11 @@ int setOuterParameters(double K, double Ti, double Td, double Tr, double N, doub
         return 1;
     }
 
-    struct PID_monitor* PID = shmat(shmid, NULL, 0);
+    struct PID_t* PID = shmat(shmid, NULL, 0);
 
     //need to make sure we have monitor lock here before changing value
+    pthread_mutex_lock(&(PID->mutex));
+
     PID->K = K;
     PID->Ti = Ti;
     PID->Td = Td;
@@ -138,6 +149,8 @@ int setOuterParameters(double K, double Ti, double Td, double Tr, double N, doub
     PID->Beta = Beta;
     PID->H = H;
     PID->integratorOn = (bool) integratorOn;
+
+    pthread_mutex_unlock(&(PID->mutex));
 
     if(shmdt(PID) == -1)
     {
@@ -175,8 +188,10 @@ int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N,
         return 1;
     }
 
-    struct PID_monitor* PID = shmat(shmid, NULL, 0);
-    //need to make sure we have monitor lock
+    struct PID_t* PID = shmat(shmid, NULL, 0);
+
+    pthread_mutex_lock(&(PID->mutex));
+
     *K = PID->K;
     *Ti = PID->Ti;
     *Td = PID->Td;
@@ -185,6 +200,8 @@ int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N,
     *Beta = PID->Beta;
     *H = PID->H;
     *integratorOn = PID->integratorOn;
+
+    pthread_mutex_unlock(&(PID->mutex));
 
     if(shmdt(PID) == -1)
     {
@@ -216,11 +233,13 @@ int setMode(int mode)
         return 1;
     }
 
-    struct mode_monitor* mm = shmat(shmid, NULL, 0);
+    struct ModeMonitor_t* mm = shmat(shmid, NULL, 0);
 
+    pthread_mutex_lock(&(mm->mutex));
 
-    //need to make sure we have monitor lock here before changing value
     mm->mode = mode;
+
+    pthread_mutex_unlock(&(mm->mutex));
 
     if(shmdt(mm) == -1)
     {
@@ -251,11 +270,14 @@ int setRef(double ref)
         return 1;
     }
 
-    struct refGen_monitor* rgm = shmat(shmid, NULL, 0);
+    struct ReferenceGenerator_t* rgm = shmat(shmid, NULL, 0);
 
 
-    //need to make sure we have monitor lock here before changing value
+    pthread_mutex_lock(&(rgm->mutex));
+
     rgm->ref = ref;
+
+    pthread_mutex_unlock(&(rgm->mutex));
 
     if(shmdt(rgm) == -1)
     {
@@ -300,5 +322,12 @@ int getMeasurementData(double *x, double *yRef, double *y)
 int shutDown()
 {
     //shutdown
+    return 0;
+}
+
+
+//temp
+int main()
+{
     return 0;
 }
