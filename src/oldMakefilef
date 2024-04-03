@@ -1,0 +1,42 @@
+CC=gcc
+CFLAGS=-Wall -Wextra -pthread
+
+OBJ_DIR = ../obj
+BIN_DIR = ../bin
+SRC_DIR = ./c
+
+#source files
+SRC_RECEIVER = $(wildcard $(SRC_DIR)/receiver.c $(SRC_DIR)PI.c $(SRC_DIR)PID.c $(SRC_DIR)ReferenceGenerator.c)
+SRC_COMMS = $(SRC_DIR)comms.c
+SRC_REGULATOR = $(SRC_DIR)regulator.c
+SRC_PI = $(SRC_DIR)PI.c
+SRC_PID = $(SRC_DIR)PID.c
+SRC_REFERENCEGENERATOR = $(SRC_DIR)ReferenceGenerator.c
+#SRC_MAIN = fill in for when main is done 
+
+#object files
+OBJS_RECEIVER = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_RECEIVER))
+OBJS_COMMS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_COMMS))
+OBJS_REGULATOR = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_REGULATOR))
+#OBJS_MAIN = fill in for when main is done 
+
+#executables
+RECEIVER = $(BIN_DIR)/receiver.so
+#MAIN = main
+
+#Rule for making .o files from .c files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c "$<" -o "$@"
+
+#Rule to build executables
+$(RECEIVER): $(OBJS_RECEIVER)
+	$(CC) $(CFLAGS) $(OBJS_RECEIVER) -o $(RECEIVER)
+
+#$(MAIN): $(OBJS_MAIN)
+#    $(CC) $(CFLAGS) $(OBJS_MAIN) -o $(MAIN)
+
+.PHONY: clean
+clean:
+	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/*
+
+all: $(RECEIVER)

@@ -216,7 +216,7 @@ int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N,
  * @param mode: int indication mode to set to. 0 = OFF, 1 = BEAM, 2 = BALL
  * @return 0 if no error was encountered, otherwise non-0
  */
-int setMode(int mode)
+int setModeFromPy(int mode)
 {
 
     key_t key = ftok("/tmp", 'M');
@@ -254,7 +254,7 @@ int setMode(int mode)
  * @param ref: double value of new reference
  * @return 0 if no error was encountered, otherwise non-0
  */
-int setRef(double ref)
+int setRefFromPy(double ref)
 {
     key_t key = ftok("/tmp", 'R');
     if(key == -1)
@@ -319,7 +319,7 @@ int getMeasurementData(double *x, double *yRef, double *y)
  * @brief shuts down regulation. Does nothing yet
  * @return 0 if no error was encountered, otherwise non-0
  */
-int shutDown()
+int shutDownFromPy()
 {
     //shutdown
     return 0;
@@ -329,5 +329,5 @@ int shutDown()
 //temp
 int main()
 {
-    return 0;
+    return test();
 }

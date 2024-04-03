@@ -118,7 +118,7 @@ def setMode(mode):
     Returns:
         int: 0 if sucessfull, non-0 of not 
     """
-    setMode_c = comms_lib.setMode
+    setMode_c = comms_lib.setModeFromPy
     setMode_c.argtypes = [ctypes.c_int]
 
     setMode_c.restype = ctypes.c_int
@@ -134,7 +134,7 @@ def setRef(newRef):
     Returns:
         int: 0 if sucessfull, non-0 of not 
     """
-    setRef_c = comms_lib.setRef
+    setRef_c = comms_lib.setRefFromPy
     setRef_c.argtypes = [ctypes.double]
 
     setRef_c.restype = ctypes.c_int
@@ -150,7 +150,7 @@ def shutDown():
         int: 0 if sucessfull, non-0 of not 
     """
 
-    shutDown_c = comms_lib.shutDown
+    shutDown_c = comms_lib.shutDownFromPy
     shutDown_c.argtypes = []
 
     shutDown_c.restype = ctypes.c_int

@@ -1,25 +1,35 @@
-IDIR =../include
 CC=gcc
-CFLAGS=-I$(IDIR)
+CFLAGS=-Wall -Wextra -pthread
 
-ODIR=obj
-LDIR =../lib
+OBJ_DIR = ../obj
+BIN_DIR = ../bin
+SRC_DIR = ./c
 
-LIBS=-lm
+#source files
+SRC := $(wildcard $(SRC_DIR)/*.c)
+#SRC_MAIN = fill in for when main is done 
 
-_DEPS = comms.h modeMonitor.h PI.h PID.h ReferenceGenerator.h regulator.h
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+#object files
+OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
-_OBJ = comms.o ModeMonitor.o PI.o PID.o receiver.o ReferenceGenerator.o regulator.o
-OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-$(ODIR)/%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+#executables
+RECEIVER = $(BIN_DIR)/receiver.so
+#MAIN = main
 
-receiver.os: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+#Rule for making .o files from .c files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c "$<" -o "$@"
+
+#Rule to build executables
+$(RECEIVER): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(RECEIVER)
+
+#$(MAIN): $(OBJS_MAIN)
+#    $(CC) $(CFLAGS) $(OBJS_MAIN) -o $(MAIN)
 
 .PHONY: clean
-
 clean:
-	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ 
+	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/*
+
+all: $(RECEIVER)

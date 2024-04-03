@@ -27,5 +27,6 @@ void updateStatePI(PI_t *pi, double u);
 long getHMillisPI(PI_t *pi);
 void setParametersPI(PI_t *pi, double K, double Ti, double Tr, double Beta, double H, bool integratorOn);
 void resetPI(PI_t *pi);
+int test();
 
 #endif

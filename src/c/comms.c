@@ -11,9 +11,7 @@
  */
 int putMeassurementData(double t, double yRef, double y)
 {
-    char* path = "python3 ./comms/putMeassurementData.py";
-    double data[] = {t, yRef, y};
-    return write(path, data, 3);
+    //need to make a streuct and put data in there
 }
 
 /**
@@ -24,9 +22,7 @@ int putMeassurementData(double t, double yRef, double y)
  */
 int putControlData(double t, double u)
 {
-    char* path = "python3 ./comms/putControlData.py";
-    double data[] = {t, u};
-    return write(path, data, 2);
+    //Need to make a struct and put datat in there
 }
 
 /**
@@ -38,18 +34,9 @@ int startOpcom()
     char* path = "python3 ./comms/startOpcom.py";
     double* data;
     return write(path, data, 0);
+    //start the opcom, integrate later
 }
 
-/**
- * @brief Starts Regul
- * @return 0 if no error was encountered, otherwise non-0
- */
-int startRegul()
-{
-    char* path = "python3 ./comms/startRegul.py";
-    double* data;
-    return write(path, data, 0);
-}
 
 /**
  * @brief *Do not call*

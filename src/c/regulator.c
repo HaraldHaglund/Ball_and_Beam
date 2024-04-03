@@ -74,7 +74,7 @@ void run_regulator(Regulator_t *regulator)
             y_position = 0;
             u_2 = 0;
 
-            writeOutput(u_2);
+            //writeOutput(u_2);
 
             break;
 
@@ -115,7 +115,7 @@ void run_regulator(Regulator_t *regulator)
             break;
 
         default:
-            printl("Error: Illegal mode.");
+            printf("Error: Illegal mode.");
             break;
         }
 
@@ -130,7 +130,7 @@ void run_regulator(Regulator_t *regulator)
         }
         else
         {
-            printl("Lagging behind...");
+            printf("Lagging behind...");
         }
     }
 
