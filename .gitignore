@@ -1,6 +1,6 @@
 # Compiled C files
 bin/
-
+obj/
 
 # Compiled Python files
 *.pyc
