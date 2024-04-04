@@ -5,8 +5,9 @@
 #include <pthread.h>
 #include "../../include/PI.h"
 #include "../../include/PID.h"
-#include "../../include/modeMonitor.h"
+#include "../../include/ModeMonitor.h"
 #include "../../include/ReferenceGenerator.h"
+#include "../../include/DataMonitor.h"
 
 #define SHM_PI_SIZE sizeof(struct PI_t)
 #define SHM_PID_SIZE sizeof(struct PID_t)
@@ -41,7 +42,9 @@ int setInnerParameters(double K, double Ti, double Tr, double Beta, double H, in
     }
 
     struct PI_t* PI = shmat(shmid, NULL, 0);
-    
+
+    setParametersPI(&PI, K, Ti, Tr, Beta, H, (bool)integratorOn);
+/*
     pthread_mutex_lock(&(PI->mutex));
 
     PI->K = K;
@@ -52,7 +55,7 @@ int setInnerParameters(double K, double Ti, double Tr, double Beta, double H, in
     PI->integratorOn = (bool) integratorOn;
 
     pthread_mutex_unlock(&(PI->mutex));
-
+*/
     if(shmdt(PI) == -1)
     {
         perror("Error, shmdt: ");
@@ -88,7 +91,10 @@ int getInnerParameters(double *K, double *Ti, double *Tr, double *Beta, double *
     }
 
     struct PI_t* PI = shmat(shmid, NULL, 0);
-    
+
+    getParametersPI(&PI, &K, &Ti, &Tr, &Beta, &H, &integratorOn);
+
+/*
     pthread_mutex_lock(&(PI->mutex));
 
     *K = PI->K;
@@ -99,7 +105,7 @@ int getInnerParameters(double *K, double *Ti, double *Tr, double *Beta, double *
     *integratorOn = PI->integratorOn;
 
     pthread_mutex_unlock(&(PI->mutex));
-
+*/
     if(shmdt(PI) == -1)
     {
         perror("Error, shmdt: ");
@@ -138,7 +144,8 @@ int setOuterParameters(double K, double Ti, double Td, double Tr, double N, doub
 
     struct PID_t* PID = shmat(shmid, NULL, 0);
 
-    //need to make sure we have monitor lock here before changing value
+    setParametersPID(&PID, K, Ti, Tr, Td, Beta, H, N, (bool)integratorOn);
+/*
     pthread_mutex_lock(&(PID->mutex));
 
     PID->K = K;
@@ -151,7 +158,7 @@ int setOuterParameters(double K, double Ti, double Td, double Tr, double N, doub
     PID->integratorOn = (bool) integratorOn;
 
     pthread_mutex_unlock(&(PID->mutex));
-
+*/
     if(shmdt(PID) == -1)
     {
         perror("Error, shmdt: ");
@@ -190,6 +197,8 @@ int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N,
 
     struct PID_t* PID = shmat(shmid, NULL, 0);
 
+    getParametersPID(&PID, &K, &Ti, &Td, &Tr, &N, &Beta, &H, &integratorOn);
+/*
     pthread_mutex_lock(&(PID->mutex));
 
     *K = PID->K;
@@ -202,7 +211,7 @@ int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N,
     *integratorOn = PID->integratorOn;
 
     pthread_mutex_unlock(&(PID->mutex));
-
+*/
     if(shmdt(PID) == -1)
     {
         perror("Error, shmdt: ");
@@ -216,7 +225,7 @@ int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N,
  * @param mode: int indication mode to set to. 0 = OFF, 1 = BEAM, 2 = BALL
  * @return 0 if no error was encountered, otherwise non-0
  */
-int setModeFromPy(int mode)
+int setModePy(int mode)
 {
 
     key_t key = ftok("/tmp", 'M');
@@ -234,13 +243,14 @@ int setModeFromPy(int mode)
     }
 
     struct ModeMonitor_t* mm = shmat(shmid, NULL, 0);
-
+    setMode(&mm, mode);
+/*
     pthread_mutex_lock(&(mm->mutex));
 
     mm->mode = mode;
 
     pthread_mutex_unlock(&(mm->mutex));
-
+*/
     if(shmdt(mm) == -1)
     {
         perror("Error, shmdt: ");
@@ -254,7 +264,7 @@ int setModeFromPy(int mode)
  * @param ref: double value of new reference
  * @return 0 if no error was encountered, otherwise non-0
  */
-int setRefFromPy(double ref)
+int setRefPy(double ref)
 {
     key_t key = ftok("/tmp", 'R');
     if(key == -1)
@@ -271,14 +281,15 @@ int setRefFromPy(double ref)
     }
 
     struct ReferenceGenerator_t* rgm = shmat(shmid, NULL, 0);
+    setRef(&rgm, ref);
 
-
+/*
     pthread_mutex_lock(&(rgm->mutex));
 
     rgm->ref = ref;
 
     pthread_mutex_unlock(&(rgm->mutex));
-
+*/
     if(shmdt(rgm) == -1)
     {
         perror("Error, shmdt: ");
@@ -293,10 +304,30 @@ int setRefFromPy(double ref)
  * @param u: pointer to double to get value of u
  * @return 0 if no error was encountered, otherwise non-0
  */
-int getControlData(double *x, double *u)
+int getControlDataPy(double *x, double *u)
 {
-    *x = 1;//get value from somewhere shared memory
-    *u = 1;//get value from somewhere shared memory
+    key_t key = ftok("/tmp", 'A');
+    if(key == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
+
+    int shmid = shmget(key, SHM_REF_SIZE, PERMS);
+    if(shmid == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
+
+    struct Data_t* dm = shmat(shmid, NULL, 0);
+    getControlData(&dm, &x, &u);
+
+    if(shmdt(dm) == -1)
+    {
+        perror("Error, shmdt: ");
+        return 1;
+    }
     return 0;
 }
 
@@ -307,11 +338,30 @@ int getControlData(double *x, double *u)
  * @param y: pointer to double to get value of y
  * @return 0 if no error was encountered, otherwise non-0
  */
-int getMeasurementData(double *x, double *yRef, double *y)
+int getMeasurementDataPy(double *x, double *yRef, double *y)
 {
-    *x = 1;//get value from somewhere shared memory
-    *yRef = 1;//get value from somewhere shared memory
-    *y = 1;//get value from somewhere shared memory
+    key_t key = ftok("/tmp", 'A');
+    if(key == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
+
+    int shmid = shmget(key, SHM_REF_SIZE, PERMS);
+    if(shmid == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
+
+    struct Data_t* dm = shmat(shmid, NULL, 0);
+    getMeasurementData(&dm, &x, &yRef, &y);
+
+    if(shmdt(dm) == -1)
+    {
+        perror("Error, shmdt: ");
+        return 1;
+    }
     return 0;
 }
 
@@ -319,10 +369,10 @@ int getMeasurementData(double *x, double *yRef, double *y)
  * @brief shuts down regulation. Does nothing yet
  * @return 0 if no error was encountered, otherwise non-0
  */
-int shutDownFromPy()
+int shutDownPy()
 {
     //shutdown
-    return 0;
+    return 1;
 }
 
 

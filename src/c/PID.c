@@ -78,6 +78,22 @@ void setParametersPID(PID_t *pid, double K, double Ti, double Tr, double Td, dou
     pthread_mutex_unlock(&(pid->mutex));
 }
 
+void getParametersPID(PID_t *pid, double *K, double *Ti, double *Td, double *Tr, double *N, double *Beta, double *H, int *integratorOn)
+{
+    pthread_mutex_lock(&(pid->mutex));
+
+    *K = pid->K;
+    *Ti = pid->Ti;
+    *Td = pid->Td;
+    *Tr = pid->Tr;
+    *N = pid->N;
+    *Beta = pid->Beta;
+    *H = pid->H;
+    *integratorOn = (int) pid->integratorOn;
+
+    pthread_mutex_unlock(&(pid->mutex));
+}
+
 void resetPID(PID_t *pid)
 {
     pthread_mutex_lock(&(pid->mutex));

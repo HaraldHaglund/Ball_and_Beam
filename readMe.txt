@@ -28,3 +28,4 @@ For generating keys use:
 'I for PI-monitor(inner controller)
 'D' for PID-monitor(outer controller)
 'R for monitor in RefGen
+'E' for data monitor

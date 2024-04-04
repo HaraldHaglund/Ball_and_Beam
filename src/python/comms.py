@@ -118,7 +118,7 @@ def setMode(mode):
     Returns:
         int: 0 if sucessfull, non-0 of not 
     """
-    setMode_c = comms_lib.setModeFromPy
+    setMode_c = comms_lib.setModePy
     setMode_c.argtypes = [ctypes.c_int]
 
     setMode_c.restype = ctypes.c_int
@@ -134,7 +134,7 @@ def setRef(newRef):
     Returns:
         int: 0 if sucessfull, non-0 of not 
     """
-    setRef_c = comms_lib.setRefFromPy
+    setRef_c = comms_lib.setRefPy
     setRef_c.argtypes = [ctypes.double]
 
     setRef_c.restype = ctypes.c_int
@@ -150,7 +150,7 @@ def shutDown():
         int: 0 if sucessfull, non-0 of not 
     """
 
-    shutDown_c = comms_lib.shutDownFromPy
+    shutDown_c = comms_lib.shutDownPy
     shutDown_c.argtypes = []
 
     shutDown_c.restype = ctypes.c_int
@@ -166,7 +166,7 @@ def getControlData():
         double: x value
         double: u value
     """
-    getControlData_c = comms_lib.getControlData
+    getControlData_c = comms_lib.getControlDataPy
     getControlData_c.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double)]
     getControlData_c.restype = ctypes.c_int
 
@@ -187,7 +187,7 @@ def getMeasurementData():
         double: yRef value
         double: y value
     """
-    getMeasurementData_c = comms_lib.getMeasurementData
+    getMeasurementData_c = comms_lib.getMeasurementDataPy
     getMeasurementData_c.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double)]
     getMeasurementData_c.restype = ctypes.c_int
 

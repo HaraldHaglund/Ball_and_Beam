@@ -16,4 +16,8 @@ typedef struct ModeMonitor_t
 
 } ModeMonitor_t;
 
+
+void initialize_ModeMonitor(ModeMonitor_t *modeMon);
+int setMode(ModeMonitor_t *modeMon, int mode);
+int getMode(ModeMonitor_t *modeMon);
 #endif

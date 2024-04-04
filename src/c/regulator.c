@@ -30,6 +30,8 @@ void set_reference_generator(Regulator_t *regul, ReferenceGenerator_t *refgen)
  * PIDParameters getOuterParameters();
  */
 
+
+//move this functionality to receiver.c so we can call it from the GUI
 void shutDown(Regulator_t *regulator)
 {
     regulator->should_run = false;

@@ -32,6 +32,7 @@ double calculateOutputPID(PID_t *pid, double y, double yref);
 void updateStatePID(PID_t *pid, double u);
 long getHMillisPID(PID_t *pid);
 void setParametersPID(PID_t *pid, double K, double Ti, double Tr, double Td, double Beta, double H, double N, bool integratorOn);
+void getParametersPID(PID_t *pid, double *K, double *Ti, double *Td, double *Tr, double *N, double *Beta, double *H, int *integratorOn);
 void resetPID(PID_t *pid);
 
 #endif

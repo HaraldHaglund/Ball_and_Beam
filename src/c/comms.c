@@ -9,7 +9,7 @@
  * @param y: y
  * @return 0 if no error was encountered, otherwise non-0
  */
-int putMeassurementData(double t, double yRef, double y)
+int putMeasurementData(double t, double yRef, double y)
 {
     //need to make a streuct and put data in there
 }

@@ -70,6 +70,18 @@ void setParametersPI(PI_t *pi, double K, double Ti, double Tr, double Beta, doub
     pthread_mutex_unlock(&(pi->mutex));
 }
 
+void getParametersPI(PI_t *pi, double *K, double *Ti, double *Tr, double *Beta, double *H, int *integratorOn)
+{
+    pthread_mutex_lock(&(pi->mutex));
+    *K = pi->K;
+    *Ti = pi->Ti;
+    *Tr = pi->Tr;
+    *Beta = pi->Beta;
+    *H = pi->H;
+    *integratorOn = (int) pi->integratorOn;
+    pthread_mutex_unlock(&(pi->mutex));
+}
+
 void resetPI(PI_t *pi)
 {
     pthread_mutex_lock(&(pi->mutex));
