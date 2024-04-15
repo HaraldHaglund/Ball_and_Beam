@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <pthread.h>
+#include <moberg.h>
 #include "PI.h"
 #include "PID.h"
 #include "comms.h"
@@ -25,8 +26,12 @@ typedef struct Regulator_t
 } Regulator_t;
 
 void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMonitor_t *modeMon);
+void set_reference_generator(Regulator_t *regul, ReferenceGenerator_t *refgen);
+void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *datamonitor);
 void shutDown(Regulator_t *regulator);
 double limit(double v);
 void run_regulator(Regulator_t *regulator);
+void writeOutput(struct moberg_analog_out out, double u, int port);
+void readInput(struct moberg_analog_in in, double *value, int port);
 
 #endif
