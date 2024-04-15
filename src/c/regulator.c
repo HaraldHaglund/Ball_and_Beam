@@ -1,4 +1,6 @@
 #include "../../include/regulator.h"
+#include "../../include/comms.h"
+#include "../../include/DataMonitor.h"
 #define MAX (10)
 #define MIN (-10)
 
@@ -11,7 +13,8 @@ void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMoni
     pthread_mutex_init(&(regulator->mutex_pi), NULL);
     pthread_mutex_init(&(regulator->mutex_pid), NULL); // Needs to be destroyed!
 
-    /* AnalogIn and AnalogOut is needed here for access to the hardware!
+    /*
+     * AnalogIn and AnalogOut is needed here for access to the hardware!
      * Function should maybe return 1 or 0 for error checking in main.
      */
 }
@@ -23,15 +26,23 @@ void set_reference_generator(Regulator_t *regul, ReferenceGenerator_t *refgen)
     regul->refgen = refgen;
 }
 
-/* void sendDataToOpCom(double yRef, double y, double u);
+void sendDataToOpCom(double yRef, double y, double u, clock_t *start)
+{
+    clock_t current = clock();
+
+    double t = (double)((current - *start) / (long)CLOCKS_PER_SEC) / 1000;
+
+    
+}
+/*
+ *
  * void setInnerParameters(PIParameters p);
  * PIParameters getInnerParameters();
  * void setOuterParameters(PIDParameters p);
  * PIDParameters getOuterParameters();
  */
 
-
-//move this functionality to receiver.c so we can call it from the GUI
+// move this functionality to receiver.c so we can call it from the GUI
 void shutDown(Regulator_t *regulator)
 {
     regulator->should_run = false;
@@ -46,10 +57,10 @@ double limit(double v)
     return v;
 }
 
-void run_regulator(Regulator_t *regulator)
+void run_regulator(Regulator_t *regulator, Data_t *dataMonitor)
 {
     long duration;
-    clock_t begin = clock();
+    clock_t start = clock();
 
     int previous = getMode(regulator->modeMon);
     int current;
@@ -76,7 +87,7 @@ void run_regulator(Regulator_t *regulator)
             y_position = 0;
             u_2 = 0;
 
-            //writeOutput(u_2);
+            // writeOutput(u_2);
 
             break;
 
@@ -101,7 +112,7 @@ void run_regulator(Regulator_t *regulator)
             pthread_mutex_lock(&(regulator->mutex_pid));
 
             u_1 = calculateOutputPID(regulator->pid, y_position, yRef);
-            
+
             pthread_mutex_lock(&(regulator->mutex_pi));
 
             // y_angle = readInput(analogInAngle); Needs AnalogIn
@@ -125,7 +136,7 @@ void run_regulator(Regulator_t *regulator)
         // sendDataToOpCom(yRef, y_position, u_2); Needing function implementation
 
         clock_t end = clock();
-        duration = (end - begin) / (long)CLOCKS_PER_SEC;
+        duration = (end - start) / (long)CLOCKS_PER_SEC;
         if (duration > 0)
         {
             sleep(duration);
@@ -141,36 +152,35 @@ void run_regulator(Regulator_t *regulator)
     pthread_mutex_destroy(&(regulator->mutex_pid));
 }
 
-
 // Writes the control signal u to the output channel: analogOut
 // @throws: IOChannelException
 
 /* private void writeOutput(double u)
-* {
-*    try
-*    {
-*        analogOut.set(u);
-*    }
-*    catch (IOChannelException e)
-*    {
-*        e.printStackTrace();
-*    }
-* } 
-*/
+ * {
+ *    try
+ *    {
+ *        analogOut.set(u);
+ *    }
+ *    catch (IOChannelException e)
+ *    {
+ *        e.printStackTrace();
+ *    }
+ * }
+ */
 
 // Reads the measurement value from the input channel: in
 // @throws: IOChannelException
 
 /* private double readInput(AnalogIn in)
-* {
-*    try
-*    {
-*        return in.get()
-*    }
-*    catch (IOChannelException e)
-*    {
-*        e.printStackTrace();
-*        return 0.0;
-*    }
-* }
-*/
+ * {
+ *    try
+ *    {
+ *        return in.get()
+ *    }
+ *    catch (IOChannelException e)
+ *    {
+ *        e.printStackTrace();
+ *        return 0.0;
+ *    }
+ * }
+ */
