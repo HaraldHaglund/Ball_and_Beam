@@ -1,6 +1,9 @@
+#include <moberg.h>
+
 #include "../../include/regulator.h"
 #include "../../include/comms.h"
 #include "../../include/DataMonitor.h"
+
 #define MAX (10)
 #define MIN (-10)
 
@@ -11,36 +14,22 @@ void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMoni
     regulator->modeMon = modeMon;
     regulator->should_run = true;
     pthread_mutex_init(&(regulator->mutex_pi), NULL);
-    pthread_mutex_init(&(regulator->mutex_pid), NULL); // Needs to be destroyed!
-
-    /*
-     * AnalogIn and AnalogOut is needed here for access to the hardware!
-     * Function should maybe return 1 or 0 for error checking in main.
-     */
+    pthread_mutex_init(&(regulator->mutex_pid), NULL);
 }
-
-// void setOpCom(OpCom opCom);
 
 void set_reference_generator(Regulator_t *regul, ReferenceGenerator_t *refgen)
 {
     regul->refgen = refgen;
 }
 
-void sendDataToOpCom(double yRef, double y, double u, clock_t *start)
+void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *datamonitor)
 {
     clock_t current = clock();
 
     double t = (double)((current - *start) / (long)CLOCKS_PER_SEC) / 1000;
 
-    
+    putData(&datamonitor, t, yRef, y, u);
 }
-/*
- *
- * void setInnerParameters(PIParameters p);
- * PIParameters getInnerParameters();
- * void setOuterParameters(PIDParameters p);
- * PIDParameters getOuterParameters();
- */
 
 // move this functionality to receiver.c so we can call it from the GUI
 void shutDown(Regulator_t *regulator)
@@ -59,6 +48,35 @@ double limit(double v)
 
 void run_regulator(Regulator_t *regulator, Data_t *dataMonitor)
 {
+    struct moberg *moberg = moberg_new(NULL);
+    if (!moberg)
+    {
+        fprintf(stderr, "NEW failed\n");
+        goto out;
+    }
+
+    struct moberg_analog_out analogOut_1;
+    struct moberg_analog_in analogInAngle_1;
+    struct moberg_analog_in analogInPosition_0;
+
+    if (!moberg_OK(moberg_analog_out_open(moberg, 1, &analogOut_1)))
+    {
+        fprintf(stderr, "OPEN analog out failed\n");
+        goto free;
+    }
+
+    if (!moberg_OK(moberg_analog_in_open(moberg, 1, &analogInAngle_1)))
+    {
+        fprintf(stderr, "OPEN analog in angle failed\n");
+        goto free;
+    }
+
+    if (!moberg_OK(moberg_analog_in_open(moberg, 0, &analogInPosition_0)))
+    {
+        fprintf(stderr, "OPEN analog position failed\n");
+        goto free;
+    }
+
     long duration;
     clock_t start = clock();
 
@@ -71,7 +89,7 @@ void run_regulator(Regulator_t *regulator, Data_t *dataMonitor)
     double u_1 = 0;
     double u_2 = 0;
 
-    while (regulator->should_run) // Is something similar to interrupted() neccessary here?
+    while (regulator->should_run) // Is something similar to interrupted() necessary here?
     {
         switch (current = getMode(regulator->modeMon))
         {
@@ -87,27 +105,29 @@ void run_regulator(Regulator_t *regulator, Data_t *dataMonitor)
             y_position = 0;
             u_2 = 0;
 
-            // writeOutput(u_2);
+            writeOutput(analogOut_1, u_2, 1);
 
             break;
 
         case BEAM:
 
-            // y_angle = readInput(analogInAngle); Needs AnalogIn
-            // yRef = getRef(refgen); Needs ReferenceGenerator
+            readInput(analogInAngle_1, &y_angle, 1);
+            yRef = getRef(&refgen);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
+
             u_2 = limit(calculateOutputPI(regulator->pi, y_angle, yRef));
-            // writeOutput(u_2); Needing working writeOutput()
+            writeOutput(analogOut_1, u_2, 1);
             updateStatePI(regulator->pi, u_2);
+
             pthread_mutex_unlock(&(regulator->mutex_pi));
 
             break;
 
         case BALL:
 
-            // y_position = readInput(analogInPosition); Needs AnalogIn
-            // yRef = getRef(refgen); Needs ReferenceGenerator
+            readInput(analogInPosition_1, &y_position, 0);
+            yRef = getRef(&refgen);
 
             pthread_mutex_lock(&(regulator->mutex_pid));
 
@@ -115,9 +135,9 @@ void run_regulator(Regulator_t *regulator, Data_t *dataMonitor)
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
-            // y_angle = readInput(analogInAngle); Needs AnalogIn
+            readInput(analogInAngle_1, &y_angle, 1); 
             u_2 = limit(calculateOutputPI(regulator->pi, y_angle, u_1));
-            // writeOutput(u_2); Needing working writeOutput()
+            writeOutput(analogOut_1, u_2, 1);
             updateStatePI(regulator->pi, u_2);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
@@ -133,7 +153,7 @@ void run_regulator(Regulator_t *regulator, Data_t *dataMonitor)
         }
 
         previous = getMode(regulator->modeMon);
-        // sendDataToOpCom(yRef, y_position, u_2); Needing function implementation
+        sendDataToOpCom(yRef, y_position, u_2, &start, &dataMonitor);
 
         clock_t end = clock();
         duration = (end - start) / (long)CLOCKS_PER_SEC;
@@ -147,40 +167,29 @@ void run_regulator(Regulator_t *regulator, Data_t *dataMonitor)
         }
     }
 
-    // writeOutput(0.0); Needing working writeOutput()
+    writeOutput(analogOut_1, 0.0, 1);
     pthread_mutex_destroy(&(regulator->mutex_pi));
     pthread_mutex_destroy(&(regulator->mutex_pid));
+
+free:
+    moberg_free(moberg);
+    return 0;
 }
 
-// Writes the control signal u to the output channel: analogOut
-// @throws: IOChannelException
+void writeOutput(struct moberg_analog_out out, double u, int port)
+{
+    if (!moberg_OK(ao0.write(ao0.context, u, &u)))
+    {
+        fprintf(stderr, "READ failed\n");
+        moberg_analog_out_close(moberg, port, out);
+    }
+}
 
-/* private void writeOutput(double u)
- * {
- *    try
- *    {
- *        analogOut.set(u);
- *    }
- *    catch (IOChannelException e)
- *    {
- *        e.printStackTrace();
- *    }
- * }
- */
-
-// Reads the measurement value from the input channel: in
-// @throws: IOChannelException
-
-/* private double readInput(AnalogIn in)
- * {
- *    try
- *    {
- *        return in.get()
- *    }
- *    catch (IOChannelException e)
- *    {
- *        e.printStackTrace();
- *        return 0.0;
- *    }
- * }
- */
+void readInput(struct moberg_analog_in in, double *value, int port)
+{
+    if (!moberg_OK(in.read(in.context, value)))
+    {
+        fprintf(stderr, "READ analog in failed\n");
+        moberg_analog_in_close(moberg, port, in);
+    }
+}
