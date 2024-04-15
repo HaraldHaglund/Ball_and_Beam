@@ -3,40 +3,15 @@
 #include <stdlib.h>
 
 /**
- * @brief Writes measurement data from the c regulator to the python GUI
- * @param t: t
- * @param yRef: yRef
- * @param y: y
- * @return 0 if no error was encountered, otherwise non-0
- */
-int putMeasurementData(double t, double yRef, double y)
-{
-    //need to make a streuct and put data in there
-}
-
-/**
- * @brief Writes control data from the c regulator to the python GUI
- * @param t: t
- * @param u: u
- * @return 0 if no error was encountered, otherwise non-0
- */
-int putControlData(double t, double u)
-{
-    //Need to make a struct and put datat in there
-}
-
-/**
  * @brief Starts Opcom
  * @return 0 if no error was encountered, otherwise non-0
  */
 int startOpcom()
 {
-    char* path = "python3 ./comms/startOpcom.py";
+    char* path = "python3 ./comms/GUI.py"; //change to path of strting the opcom
     double* data;
     return write(path, data, 0);
-    //start the opcom, integrate later
 }
-
 
 /**
  * @brief *Do not call*

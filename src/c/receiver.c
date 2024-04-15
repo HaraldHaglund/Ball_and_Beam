@@ -8,11 +8,13 @@
 #include "../../include/ModeMonitor.h"
 #include "../../include/ReferenceGenerator.h"
 #include "../../include/DataMonitor.h"
+#include "../../include/regulator.h"
 
 #define SHM_PI_SIZE sizeof(struct PI_t)
 #define SHM_PID_SIZE sizeof(struct PID_t)
 #define SHM_MODE_SIZE sizeof(struct ModeMonitor_t)
 #define SHM_REF_SIZE sizeof(struct ModeMonitor_t)
+#define SHM_DATA_SIZE sizeof(struct Data_t)
 #define PERMS 0666
 
 /**
