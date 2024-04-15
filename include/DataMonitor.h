@@ -13,6 +13,7 @@ typedef struct Data_t
 
 } Data_t;
 
+//ignore t for our implementation
 putData(Data_t *md, double t, double yRef, double y, double u)
 {
     pthread_mutex_lock(&(md->mutex));

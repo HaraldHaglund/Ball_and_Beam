@@ -15,6 +15,7 @@
 #define SHM_MODE_SIZE sizeof(struct ModeMonitor_t)
 #define SHM_REF_SIZE sizeof(struct ModeMonitor_t)
 #define SHM_DATA_SIZE sizeof(struct Data_t)
+#define SHM_REG_SIZE sizeof(struct Regulator_t)
 #define PERMS 0666
 
 /**
@@ -46,18 +47,7 @@ int setInnerParameters(double K, double Ti, double Tr, double Beta, double H, in
     struct PI_t* PI = shmat(shmid, NULL, 0);
 
     setParametersPI(&PI, K, Ti, Tr, Beta, H, (bool)integratorOn);
-/*
-    pthread_mutex_lock(&(PI->mutex));
 
-    PI->K = K;
-    PI->Ti = Ti;
-    PI->Tr = Tr;
-    PI->Beta = Beta;
-    PI->H = H;
-    PI->integratorOn = (bool) integratorOn;
-
-    pthread_mutex_unlock(&(PI->mutex));
-*/
     if(shmdt(PI) == -1)
     {
         perror("Error, shmdt: ");
@@ -96,18 +86,6 @@ int getInnerParameters(double *K, double *Ti, double *Tr, double *Beta, double *
 
     getParametersPI(&PI, &K, &Ti, &Tr, &Beta, &H, &integratorOn);
 
-/*
-    pthread_mutex_lock(&(PI->mutex));
-
-    *K = PI->K;
-    *Ti = PI->Ti;
-    *Tr = PI->Tr;
-    *Beta = PI->Beta;
-    *H = PI->H;
-    *integratorOn = PI->integratorOn;
-
-    pthread_mutex_unlock(&(PI->mutex));
-*/
     if(shmdt(PI) == -1)
     {
         perror("Error, shmdt: ");
@@ -147,20 +125,7 @@ int setOuterParameters(double K, double Ti, double Td, double Tr, double N, doub
     struct PID_t* PID = shmat(shmid, NULL, 0);
 
     setParametersPID(&PID, K, Ti, Tr, Td, Beta, H, N, (bool)integratorOn);
-/*
-    pthread_mutex_lock(&(PID->mutex));
 
-    PID->K = K;
-    PID->Ti = Ti;
-    PID->Td = Td;
-    PID->Tr = Tr;
-    PID->N = N;
-    PID->Beta = Beta;
-    PID->H = H;
-    PID->integratorOn = (bool) integratorOn;
-
-    pthread_mutex_unlock(&(PID->mutex));
-*/
     if(shmdt(PID) == -1)
     {
         perror("Error, shmdt: ");
@@ -200,20 +165,7 @@ int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N,
     struct PID_t* PID = shmat(shmid, NULL, 0);
 
     getParametersPID(&PID, &K, &Ti, &Td, &Tr, &N, &Beta, &H, &integratorOn);
-/*
-    pthread_mutex_lock(&(PID->mutex));
 
-    *K = PID->K;
-    *Ti = PID->Ti;
-    *Td = PID->Td;
-    *Tr = PID->Tr;
-    *N = PID->N;
-    *Beta = PID->Beta;
-    *H = PID->H;
-    *integratorOn = PID->integratorOn;
-
-    pthread_mutex_unlock(&(PID->mutex));
-*/
     if(shmdt(PID) == -1)
     {
         perror("Error, shmdt: ");
@@ -246,13 +198,7 @@ int setModePy(int mode)
 
     struct ModeMonitor_t* mm = shmat(shmid, NULL, 0);
     setMode(&mm, mode);
-/*
-    pthread_mutex_lock(&(mm->mutex));
 
-    mm->mode = mode;
-
-    pthread_mutex_unlock(&(mm->mutex));
-*/
     if(shmdt(mm) == -1)
     {
         perror("Error, shmdt: ");
@@ -285,13 +231,6 @@ int setRefPy(double ref)
     struct ReferenceGenerator_t* rgm = shmat(shmid, NULL, 0);
     setRef(&rgm, ref);
 
-/*
-    pthread_mutex_lock(&(rgm->mutex));
-
-    rgm->ref = ref;
-
-    pthread_mutex_unlock(&(rgm->mutex));
-*/
     if(shmdt(rgm) == -1)
     {
         perror("Error, shmdt: ");
@@ -308,7 +247,7 @@ int setRefPy(double ref)
  */
 int getControlDataPy(double *x, double *u)
 {
-    key_t key = ftok("/tmp", 'A');
+    key_t key = ftok("/tmp", 'E');
     if(key == -1)
     {
         perror("Error, ftok:");
@@ -342,7 +281,7 @@ int getControlDataPy(double *x, double *u)
  */
 int getMeasurementDataPy(double *x, double *yRef, double *y)
 {
-    key_t key = ftok("/tmp", 'A');
+    key_t key = ftok("/tmp", 'E');
     if(key == -1)
     {
         perror("Error, ftok:");
@@ -368,18 +307,38 @@ int getMeasurementDataPy(double *x, double *yRef, double *y)
 }
 
 /**
- * @brief shuts down regulation. Does nothing yet
+ * @brief shuts down regulation by calling shutdown in the regulator
  * @return 0 if no error was encountered, otherwise non-0
  */
 int shutDownPy()
 {
-    //shutdown
-    return 1;
+    key_t key = ftok("/tmp", 'G');
+    if(key == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
+
+    int shmid = shmget(key, SHM_REG_SIZE, PERMS);
+    if(shmid == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
+
+    struct Regulator_t* reg = shmat(shmid, NULL, 0);
+    shutDown(&reg);
+
+    if(shmdt(reg) == -1)
+    {
+        perror("Error, shmdt: ");
+        return 1;
+    }
+    return 0;
 }
 
-
-//temp
+//logical entry point, is not used for anything ever
 int main()
 {
-    return test();
+    return 0;
 }

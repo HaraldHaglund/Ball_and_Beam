@@ -26,7 +26,7 @@ typedef struct PID_t
     pthread_mutex_t mutex;
 } PID_t;
 
-void initialize_pid(PID_t *pid);
+void initialize_PID(PID_t *pid);
 void destroy_PID(PID_t *pi);
 double calculateOutputPID(PID_t *pid, double y, double yref);
 void updateStatePID(PID_t *pid, double u);

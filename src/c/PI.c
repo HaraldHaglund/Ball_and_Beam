@@ -88,8 +88,3 @@ void resetPI(PI_t *pi)
     pi->I = 0.0;
     pthread_mutex_unlock(&(pi->mutex));
 }
-
-int test()
-{
-    return 2;
-}

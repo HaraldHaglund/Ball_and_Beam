@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include "../../include/PID.h"
 
-void initialize_pid(PID_t *pid)
+void initialize_PID(PID_t *pid)
 {
     pid->K = 0.13;
     pid->Ti = 5.0;

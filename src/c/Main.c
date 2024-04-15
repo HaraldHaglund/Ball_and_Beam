@@ -4,8 +4,10 @@
 #include "../../include/ModeMonitor.h"
 #include "../../include/PI.h"
 #include "../../include/PID.h"
-#include "../../include/referenceGenerator.h"
+#include "../../include/ReferenceGenerator.h"
 #include "../../include/regulator.h"
+#include "../../include/comms.h"
+
 #define SHM_PI_SIZE sizeof(struct PI_t)
 #define SHM_PID_SIZE sizeof(struct PID_t)
 #define SHM_MODE_SIZE sizeof(struct ModeMonitor_t)
@@ -19,33 +21,110 @@ int main ()
 {
     //mode monitor
     key_t key_mode = ftok("/tmp", 'M');
+    if(key_mode == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
+
     int shmid_mode = shmget(key_mode, SHM_MODE_SIZE, IPC_CREAT | PERMS);
+    if(shmid_mode == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
     struct ModeMonitor_t* mode_monitor = shmat(shmid_mode, NULL, 0);
 
     //PI innner controller
     key_t key_PI = ftok("/tmp", 'I');
+    if(key_PI == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
     int shmid_PI = shmget(key_PI, SHM_PI_SIZE, IPC_CREAT | PERMS);
+    if(shmid_PI == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
     struct PI_t* PI = shmat(shmid_PI, NULL, 0);
 
     //PID outer fontroller
     key_t key_PID = ftok("/tmp", 'D');
+    if(key_PID == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
     int shmid_PID = shmget(key_PID, SHM_PID_SIZE, IPC_CREAT | PERMS);
-    struct PID_t* PId = shmat(shmid_PID, NULL, 0);
+    if(shmid_PID == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
+    struct PID_t* PID = shmat(shmid_PID, NULL, 0);
     
     //Refgen monitor
     key_t key_refGen = ftok("/tmp", 'R');
+    if(key_refGen == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
     int shmid_refGen = shmget(key_refGen, SHM_REF_SIZE, IPC_CREAT | PERMS);
-    struct ReferenceGenerator_t* RefGen = shmat(shmid_refGen, NULL, 0);
+    if(shmid_refGen == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
+    struct ReferenceGenerator_t* refGen = shmat(shmid_refGen, NULL, 0);
 
     //data monitor
     key_t key_data = ftok("/tmp", 'E');
+    if(key_data == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
     int shmid_data = shmget(key_data, SHM_DATA_SIZE, IPC_CREAT | PERMS);
+    if(shmid_data == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
     struct Data_t* data_monitor = shmat(shmid_data, NULL, 0);
 
     //regulator
     key_t key_reg = ftok("/tmp", 'G');
+    if(key_reg == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
     int shmid_reg = shmget(key_reg, SHM_REG_SIZE, IPC_CREAT | PERMS);
+    if(shmid_reg == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
     struct Regulator_t* regulator = shmat(shmid_reg, NULL, 0);
 
-    
+    //initialization of all structs
+    initialize_ModeMonitor(&mode_monitor);
+    initialize_PI(&PI);
+    initialize_PID(&PID);
+    initialize_referenceGenerator(&refGen);
+    initialize_DataMonitor(&data_monitor);
+    initialize_regulator(&regulator, &PI, &PID, &mode_monitor);
+
+    //start threads
+
+    //start GUI
+    if(startOpcom() != 0)
+    {
+        return -1;
+    }
+
+    //done
 }
