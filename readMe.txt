@@ -29,3 +29,4 @@ For generating keys use:
 'D' for PID-monitor(outer controller)
 'R for monitor in RefGen
 'E' for data monitor
+'G' for regulator

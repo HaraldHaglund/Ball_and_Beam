@@ -142,7 +142,7 @@ def setRef(newRef):
 
 def shutDown():
     """
-    Does nothing yet
+    sends signal to regulator to shut down
 
     Args:
 
@@ -158,7 +158,7 @@ def shutDown():
 
 def getControlData():
     """
-    Gets control data.
+    Gets control data. X value should be ignored in outr implementation
 
     Args:
 
@@ -178,7 +178,7 @@ def getControlData():
 
 def getMeasurementData():
     """
-    Gets measurement data.
+    Gets measurement data. x value should be ignored in our implementation
 
     Args:
 
