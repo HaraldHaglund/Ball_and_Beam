@@ -12,7 +12,6 @@ SRC := $(wildcard $(SRC_DIR)/*.c)
 #object files
 OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
-
 #executables
 RECEIVER = $(BIN_DIR)/receiver.so
 #MAIN = main

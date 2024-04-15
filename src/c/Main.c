@@ -17,7 +17,7 @@
 #define PERMS 0666
 
 
-int main ()
+int main()
 {
     //mode monitor
     key_t key_mode = ftok("/tmp", 'M');
@@ -111,14 +111,17 @@ int main ()
     struct Regulator_t* regulator = shmat(shmid_reg, NULL, 0);
 
     //initialization of all structs
-    initialize_ModeMonitor(&mode_monitor);
-    initialize_PI(&PI);
-    initialize_PID(&PID);
-    initialize_referenceGenerator(&refGen);
-    initialize_DataMonitor(&data_monitor);
-    initialize_regulator(&regulator, &PI, &PID, &mode_monitor);
+    initialize_ModeMonitor(mode_monitor);
+    initialize_PI(PI);
+    initialize_PID(PID);
+    initialize_referenceGenerator(refGen);
+    initialize_DataMonitor(data_monitor);
+    initialize_regulator(regulator, PI, PID, mode_monitor);
 
     //start threads
+
+    //start refGen thread
+    //start regul thread
 
     //start GUI
     if(startOpcom() != 0)
@@ -127,4 +130,5 @@ int main ()
     }
 
     //done
+    return 0;
 }

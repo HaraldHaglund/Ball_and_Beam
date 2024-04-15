@@ -14,7 +14,7 @@ typedef struct Data_t
 } Data_t;
 
 //ignore t for our implementation
-putData(Data_t *md, double t, double yRef, double y, double u)
+int putData(Data_t *md, double t, double yRef, double y, double u)
 {
     pthread_mutex_lock(&(md->mutex));
     md->t = t;
@@ -22,24 +22,26 @@ putData(Data_t *md, double t, double yRef, double y, double u)
     md->y = y;
     md->u = u;
     pthread_mutex_unlock(&(md->mutex));
+    return 0;
 }
 
-getMeasurementData(Data_t *md, double *t, double *yRef, double *y)
+int getMeasurementData(Data_t *md, double *t, double *yRef, double *y)
 {
     pthread_mutex_lock(&(md->mutex));
     *t = md->t;
     *yRef = md->yRef;
     *y = md->y;
     pthread_mutex_unlock(&(md->mutex));
+    return 0;
 }
 
-getControlData(Data_t *md, double *t, double *u)
+int getControlData(Data_t *md, double *t, double *u)
 {
     pthread_mutex_lock(&(md->mutex));
     *t = md->t;
     *u = md->u;
     pthread_mutex_unlock(&(md->mutex));
-
+    return 0;
 }
 
 void initialize_DataMonitor(Data_t *md)
