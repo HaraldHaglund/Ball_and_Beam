@@ -1,4 +1,4 @@
-#include "../../include/regulator.h"
+#include "../../include/Regulator.h"
 #include "../../include/comms.h"
 #include "../../include/DataMonitor.h"
 
