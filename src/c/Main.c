@@ -16,101 +16,100 @@
 #define SHM_REG_SIZE sizeof(struct Regulator_t)
 #define PERMS 0666
 
-
 int main()
 {
-    //mode monitor
+    // mode monitor
     key_t key_mode = ftok("/tmp", 'M');
-    if(key_mode == -1)
+    if (key_mode == -1)
     {
         perror("Error, ftok:");
         return 1;
     }
 
     int shmid_mode = shmget(key_mode, SHM_MODE_SIZE, IPC_CREAT | PERMS);
-    if(shmid_mode == -1)
+    if (shmid_mode == -1)
     {
         perror("Error, shmget: ");
         return 1;
     }
-    struct ModeMonitor_t* mode_monitor = shmat(shmid_mode, NULL, 0);
+    struct ModeMonitor_t *mode_monitor = shmat(shmid_mode, NULL, 0);
 
-    //PI innner controller
+    // PI innner controller
     key_t key_PI = ftok("/tmp", 'I');
-    if(key_PI == -1)
+    if (key_PI == -1)
     {
         perror("Error, ftok:");
         return 1;
     }
     int shmid_PI = shmget(key_PI, SHM_PI_SIZE, IPC_CREAT | PERMS);
-    if(shmid_PI == -1)
+    if (shmid_PI == -1)
     {
         perror("Error, shmget: ");
         return 1;
     }
-    struct PI_t* PI = shmat(shmid_PI, NULL, 0);
+    struct PI_t *PI = shmat(shmid_PI, NULL, 0);
 
-    //PID outer fontroller
+    // PID outer fontroller
     key_t key_PID = ftok("/tmp", 'D');
-    if(key_PID == -1)
+    if (key_PID == -1)
     {
         perror("Error, ftok:");
         return 1;
     }
     int shmid_PID = shmget(key_PID, SHM_PID_SIZE, IPC_CREAT | PERMS);
-    if(shmid_PID == -1)
+    if (shmid_PID == -1)
     {
         perror("Error, shmget: ");
         return 1;
     }
-    struct PID_t* PID = shmat(shmid_PID, NULL, 0);
-    
-    //Refgen monitor
+    struct PID_t *PID = shmat(shmid_PID, NULL, 0);
+
+    // Refgen monitor
     key_t key_refGen = ftok("/tmp", 'R');
-    if(key_refGen == -1)
+    if (key_refGen == -1)
     {
         perror("Error, ftok:");
         return 1;
     }
     int shmid_refGen = shmget(key_refGen, SHM_REF_SIZE, IPC_CREAT | PERMS);
-    if(shmid_refGen == -1)
+    if (shmid_refGen == -1)
     {
         perror("Error, shmget: ");
         return 1;
     }
-    struct ReferenceGenerator_t* refGen = shmat(shmid_refGen, NULL, 0);
+    struct ReferenceGenerator_t *refGen = shmat(shmid_refGen, NULL, 0);
 
-    //data monitor
+    // data monitor
     key_t key_data = ftok("/tmp", 'E');
-    if(key_data == -1)
+    if (key_data == -1)
     {
         perror("Error, ftok:");
         return 1;
     }
     int shmid_data = shmget(key_data, SHM_DATA_SIZE, IPC_CREAT | PERMS);
-    if(shmid_data == -1)
+    if (shmid_data == -1)
     {
         perror("Error, shmget: ");
         return 1;
     }
-    struct Data_t* data_monitor = shmat(shmid_data, NULL, 0);
+    struct Data_t *data_monitor = shmat(shmid_data, NULL, 0);
 
-    //regulator
+    // regulator
     key_t key_reg = ftok("/tmp", 'G');
-    if(key_reg == -1)
+    if (key_reg == -1)
     {
         perror("Error, ftok:");
         return 1;
     }
     int shmid_reg = shmget(key_reg, SHM_REG_SIZE, IPC_CREAT | PERMS);
-    if(shmid_reg == -1)
+    if (shmid_reg == -1)
     {
         perror("Error, shmget: ");
         return 1;
     }
-    struct Regulator_t* regulator = shmat(shmid_reg, NULL, 0);
+    struct Regulator_t *regulator = shmat(shmid_reg, NULL, 0);
 
-    //initialization of all structs
+    // initialization of all structs
     initialize_ModeMonitor(mode_monitor);
     initialize_PI(PI);
     initialize_PID(PID);
@@ -118,17 +117,39 @@ int main()
     initialize_DataMonitor(data_monitor);
     initialize_regulator(regulator, PI, PID, mode_monitor);
 
-    //start threads
+    // start threads
 
-    //start refGen thread
-    //start regul thread
+    // start regul thread, see the run_regulator function and the regulator argument struct in regulator.h
+    // for understanding how to start a "run"-function.
 
-    //start GUI
-    if(startOpcom() != 0)
+    pthread_t regulator_thread;
+    regulator_arguments args;
+
+    args.regulator = regulator;
+    args.data_monitor = data_monitor;
+
+    if (pthread_create(&regulator_thread, NULL, run_regulator, (void*)&args) != 0)
+    {
+        perror("Error starting regulator thread");
+        return 1;
+    }
+
+    // start refGen thread
+
+    pthread_t refGen_thread;
+
+    // start GUI
+    if (startOpcom() != 0)
     {
         return -1;
     }
 
-    //done
+    // done
+    if (pthread_join(regulator_thread, NULL) != 0)
+    {
+        perror("Error joining regulator thread");
+        return 1;
+    }
+
     return 0;
 }

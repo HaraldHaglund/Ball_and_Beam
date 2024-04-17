@@ -1,4 +1,4 @@
-#include "../../include/Regulator.h"
+#include "../../include/regulator.h"
 #include "../../include/comms.h"
 #include "../../include/DataMonitor.h"
 
@@ -44,8 +44,12 @@ double limit(double v)
     return v;
 }
 
-void run_regulator(Regulator_t *regulator, Data_t *dataMonitor)
+void* run_regulator(void *arg)
 {
+    regulator_arguments *args = (regulator_arguments*)arg;
+    Regulator_t *regulator = args->regulator;
+    Data_t *dataMonitor = args->data_monitor;
+
     struct moberg *moberg = moberg_new(NULL);
     if (!moberg)
     {

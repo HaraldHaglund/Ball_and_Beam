@@ -25,6 +25,12 @@ typedef struct Regulator_t
     pthread_mutex_t mutex_pid;
 } Regulator_t;
 
+typedef struct
+{
+    Regulator_t *regulator;
+    Data_t *data_monitor;
+} regulator_arguments;
+
 void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMonitor_t *modeMon);
 void set_reference_generator(Regulator_t *regul, ReferenceGenerator_t *refgen);
 void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *datamonitor);
