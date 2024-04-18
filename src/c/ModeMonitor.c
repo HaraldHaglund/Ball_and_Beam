@@ -1,4 +1,4 @@
-#include "../../include/ModeMonitor.h"
+#include "../../include/modeMonitor.h"
 
 void initialize_ModeMonitor(ModeMonitor_t *modeMon)
 {
