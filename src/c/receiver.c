@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include "../../include/PI.h"
 #include "../../include/PID.h"
-#include "../../include/ModeMonitor.h"
+#include "../../include/modeMonitor.h"
 #include "../../include/ReferenceGenerator.h"
 #include "../../include/DataMonitor.h"
 #include "../../include/regulator.h"
