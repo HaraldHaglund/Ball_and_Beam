@@ -3,7 +3,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 import numpy as np
-import comms as c
+import comms_dum as c
 
 # Global variables
 dataOut = np.array([])
@@ -104,19 +104,23 @@ def on_validate(P):
 
 # Parameter buttons
 param1 = ['K', 'Ti', 'Tr', 'Beta', 'h']
+start_inner = [str(inner_K), str(inner_Ti), str(inner_Tr), str(inner_beta), str(inner_H)]
 for i in range(len(param1)):
     label = tk.Label(params, text=param1[i], font=('Courier', 20), width=5)
     label.grid(row=i, column=0, sticky="nsew")
     button = tk.Entry(params, validate="key", validatecommand=(params.register(on_validate), "%P"),
                       font=('Courier', 60), width=3)
+    button.insert(tk.END, start_inner[i])
     button.grid(row=i, column=1, sticky="nsew")
 
 param2 = ['K', 'Ti', 'Td', 'N', 'Tr', 'Beta', 'h']
+start_outer = [str(outer_K), str(outer_Ti), str(outer_Td), str(outer_N), str(outer_Tr), str(outer_beta), str(outer_H)]
 for i in range(len(param2)):
     label = tk.Label(params, text=param2[i], font=('Courier', 20), width=5)
     label.grid(row=i, column=2, sticky="nsew")
     button = tk.Entry(params, validate="key", validatecommand=(params.register(on_validate), "%P"),
                       font=('Courier', 60), width=3)
+    button.insert(tk.END, start_outer[i])
     button.grid(row=i, column=3, sticky="nsew")
 
 # Apply buttons
