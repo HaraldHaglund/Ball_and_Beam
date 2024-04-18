@@ -37,7 +37,7 @@ void set_reference_generator(Regulator_t *regul, ReferenceGenerator_t *refgen);
 void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *datamonitor);
 void shutDown(Regulator_t *regulator);
 double limit(double v);
-void run_regulator(Regulator_t *regulator);
+void *run_regulator(void *arg);
 void writeOutput(struct moberg_analog_out out, double u, int port);
 void readInput(struct moberg_analog_in in, double *value, int port);
 

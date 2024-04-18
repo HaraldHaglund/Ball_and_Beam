@@ -134,10 +134,6 @@ int main()
         return 1;
     }
 
-    // start refGen thread
-
-    pthread_t refGen_thread;
-
     // start GUI
     if (startOpcom() != 0)
     {
