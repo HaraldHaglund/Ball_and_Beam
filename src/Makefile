@@ -12,9 +12,9 @@ SRC_RECEIVER := $(SRC_DIR)/receiver.c $(SRC_DIR)/PI.c $(SRC_DIR)/PID.c $(SRC_DIR
 SRC_MAIN := $(SRC_DIR)/Main.c $(SRC_DIR)/DataMonitor.c $(SRC_DIR)/ModeMonitor.c $(SRC_DIR)/PI.c $(SRC_DIR)/PID.c $(SRC_DIR)/ReferenceGenerator.c $(SRC_DIR)/regulator.c $(SRC_DIR)/comms.c
 
 #object files
-OBJ_REGULATOR = $(SRC_REGULATOR:.c=.o)
-OBJ_RECEIVER := $(SRC_RECEIVER:.c=.o)
-OBJ_MAIN := $(SRC_MAIN:.c=.o)
+OBJ_REGULATOR := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_REGULATOR))
+OBJ_RECEIVER := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_RECEIVER))
+OBJ_MAIN := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_MAIN))
 
 #executables
 EXEC_RECEIVER = $(BIN_DIR)/receiver.so
@@ -36,3 +36,5 @@ clean:
 	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/*
 
 all: $(EXEC_RECEIVER) $(EXEC_MAIN)
+# Ensure that the output directories exist
+$(shell mkdir -p $(OBJ_DIR) $(BIN_DIR))

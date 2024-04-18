@@ -46,7 +46,7 @@ int setInnerParameters(double K, double Ti, double Tr, double Beta, double H, in
 
     struct PI_t* PI = shmat(shmid, NULL, 0);
 
-    setParametersPI(&PI, K, Ti, Tr, Beta, H, (bool)integratorOn);
+    setParametersPI(PI, K, Ti, Tr, Beta, H, (bool)integratorOn);
 
     if(shmdt(PI) == -1)
     {
@@ -84,7 +84,7 @@ int getInnerParameters(double *K, double *Ti, double *Tr, double *Beta, double *
 
     struct PI_t* PI = shmat(shmid, NULL, 0);
 
-    getParametersPI(&PI, &K, &Ti, &Tr, &Beta, &H, &integratorOn);
+    getParametersPI(PI, K, Ti, Tr, Beta, H, integratorOn);
 
     if(shmdt(PI) == -1)
     {
@@ -124,7 +124,7 @@ int setOuterParameters(double K, double Ti, double Td, double Tr, double N, doub
 
     struct PID_t* PID = shmat(shmid, NULL, 0);
 
-    setParametersPID(&PID, K, Ti, Tr, Td, Beta, H, N, (bool)integratorOn);
+    setParametersPID(PID, K, Ti, Tr, Td, Beta, H, N, (bool)integratorOn);
 
     if(shmdt(PID) == -1)
     {
@@ -164,7 +164,7 @@ int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N,
 
     struct PID_t* PID = shmat(shmid, NULL, 0);
 
-    getParametersPID(&PID, &K, &Ti, &Td, &Tr, &N, &Beta, &H, &integratorOn);
+    getParametersPID(PID, K, Ti, Td, Tr, N, Beta, H, integratorOn);
 
     if(shmdt(PID) == -1)
     {
@@ -197,7 +197,7 @@ int setModePy(int mode)
     }
 
     struct ModeMonitor_t* mm = shmat(shmid, NULL, 0);
-    setMode(&mm, mode);
+    setMode(mm, mode);
 
     if(shmdt(mm) == -1)
     {
@@ -229,7 +229,7 @@ int setRefPy(double ref)
     }
 
     struct ReferenceGenerator_t* rgm = shmat(shmid, NULL, 0);
-    setRef(&rgm, ref);
+    setRef(rgm, ref);
 
     if(shmdt(rgm) == -1)
     {
@@ -262,7 +262,7 @@ int getControlDataPy(double *x, double *u)
     }
 
     struct Data_t* dm = shmat(shmid, NULL, 0);
-    getControlData(&dm, &x, &u);
+    getControlData(dm, x, u);
 
     if(shmdt(dm) == -1)
     {
@@ -296,7 +296,7 @@ int getMeasurementDataPy(double *x, double *yRef, double *y)
     }
 
     struct Data_t* dm = shmat(shmid, NULL, 0);
-    getMeasurementData(&dm, &x, &yRef, &y);
+    getMeasurementData(dm, x, yRef, y);
 
     if(shmdt(dm) == -1)
     {
@@ -327,7 +327,7 @@ int shutDownPy()
     }
 
     struct Regulator_t* reg = shmat(shmid, NULL, 0);
-    shutDown(&reg);
+    shutDown(reg);
 
     if(shmdt(reg) == -1)
     {
