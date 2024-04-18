@@ -6,16 +6,10 @@
  * @brief Starts Opcom
  * @return 0 if no error was encountered, otherwise non-0
  */
-int startOpcom()
+int startTest()
 {
-    char* path = "python3 ../src/python/GUI.py"; //change to path of strting the opcom
-    double* data;make
-gcc -shared -Wall -Wextra -pthread -o ../bin/receiver.so ../obj/receiver.o ../obj/PI.o ../obj/PID.o ../obj/modeMonitor.o ../obj/ReferenceGenerator.o ../obj/DataMonitor.o ../obj/regulator.o -lmoberg -pthread
-/usr/bin/ld: ../obj/receiver.o: relocation R_X86_64_32 against `.rodata' can not be used when making a shared object; recompile with -fPIC
-/usr/bin/ld: failed to set dynamic section sizes: bad value
-collect2: error: ld returned 1 exit status
-make: *** [Makefile:29: ../bin/receiver.so] Error 1
-
+    char* path = "python3 ../src/python/test.py"; //change to path of strting the opcom
+    double* data;
     return write(path, data, 0);
 }
 
@@ -47,4 +41,16 @@ int write(char* path, double data[], int nbr_data)
     }
 
     return 0;
+}
+
+int main()
+{
+    printf("in main before starting test\n");
+    // start GUI
+    if (startTest() != 0)
+    {
+        return -1;
+    }
+
+    printf("in main after running test\n");
 }

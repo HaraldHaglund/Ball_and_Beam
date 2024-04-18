@@ -1,4 +1,7 @@
+#include<stdio.h>
+
 int test()
 {
-    return 1;
+    printf("inside test in c\n");
+    return 2;
 }
