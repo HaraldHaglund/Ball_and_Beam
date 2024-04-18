@@ -8,7 +8,7 @@ SRC_DIR = ./c
 
 #source files
 SRC_REGULATOR := $(SRC_DIR)/regulator.c $(SRC_DIR)/comms.c $(SRC_DIR)/DataMonitor.c
-SRC_RECEIVER := $(SRC_DIR)/receiver.c $(SRC_DIR)/PI.c $(SRC_DIR)/PID.c $(SRC_DIR)/modeMoniotor.c $(SRC_DIR)/ReferenceGenerator.c $(SRC_DIR)/DataMonitor.c $(SRC_DIR)/refgulator.c
+SRC_RECEIVER := $(SRC_DIR)/receiver.c $(SRC_DIR)/PI.c $(SRC_DIR)/PID.c $(SRC_DIR)/modeMonitor.c $(SRC_DIR)/ReferenceGenerator.c $(SRC_DIR)/DataMonitor.c $(SRC_DIR)/refgulator.c
 SRC_MAIN := $(SRC_DIR)/Main.c $(SRC_DIR)/DataMonitor.c $(SRC_DIR)/modeMonitor.c $(SRC_DIR)/PI.c $(SRC_DIR)/PID.c $(SRC_DIR)/ReferenceGenerator.c $(SRC_DIR)/regulator.c $(SRC_DIR)/comms.c
 
 #object files
