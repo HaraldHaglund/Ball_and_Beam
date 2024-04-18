@@ -38,7 +38,7 @@ void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *da
 void shutDown(Regulator_t *regulator);
 double limit(double v);
 void *run_regulator(void *arg);
-void writeOutput(struct moberg_analog_out out, double u, int port);
-void readInput(struct moberg_analog_in in, double *value, int port);
+void writeOutput(struct moberg_analog_out out, double u, int port, struct moderg *moberg);
+void readInput(struct moberg_analog_in in, double *value, int port, struct moberg *moberg);
 
 #endif
