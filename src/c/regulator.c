@@ -113,7 +113,7 @@ void* run_regulator(void *arg)
         case BEAM:
 
             readInput(analogInAngle_1, &y_angle, 1, moberg);
-            yRef = getRef(refgen);
+            yRef = getRef(regulator->refgen);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
@@ -128,7 +128,7 @@ void* run_regulator(void *arg)
         case BALL:
 
             readInput(analogInPosition_0, &y_position, 0, moberg);
-            yRef = getRef(refgen);
+            yRef = getRef(regulator->refgen);
 
             pthread_mutex_lock(&(regulator->mutex_pid));
 
