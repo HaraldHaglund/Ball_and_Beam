@@ -12,7 +12,7 @@
 #include "PID.h"
 #include "comms.h"
 #include "ReferenceGenerator.h"
-#include "ModeMonitor.h"
+#include "modeMonitor.h"
 
 typedef struct Regulator_t
 {
