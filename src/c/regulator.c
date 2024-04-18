@@ -44,9 +44,9 @@ double limit(double v)
     return v;
 }
 
-void* run_regulator(void *arg)
+void *run_regulator(void *arg)
 {
-    regulator_arguments *args = (regulator_arguments*)arg;
+    regulator_arguments *args = (regulator_arguments *)arg;
     Regulator_t *regulator = args->regulator;
     Data_t *dataMonitor = args->data_monitor;
 
@@ -81,8 +81,8 @@ void* run_regulator(void *arg)
     long duration;
     clock_t start = clock();
 
-    int previous = getMode(regulator->modeMon);
-    int current;
+    int current = getMode(regulator->modeMon);
+    int previous = current;
 
     double yRef = 0;
     double y_position = 0;
@@ -92,13 +92,15 @@ void* run_regulator(void *arg)
 
     while (regulator->should_run) // Is something similar to interrupted() necessary here?
     {
-        switch (current = getMode(regulator->modeMon))
+
+        if (previous != current)
         {
-            if (previous != current)
-            {
-                resetPI(regulator->pi);
-                resetPID(regulator->pid);
-            }
+            resetPI(regulator->pi);
+            resetPID(regulator->pid);
+        }
+
+        switch (current)
+        {
 
         case OFF:
 
@@ -136,7 +138,7 @@ void* run_regulator(void *arg)
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
-            readInput(analogInAngle_1, &y_angle, 1, moberg); 
+            readInput(analogInAngle_1, &y_angle, 1, moberg);
             u_2 = limit(calculateOutputPI(regulator->pi, y_angle, u_1));
             writeOutput(analogOut_1, u_2, 1, moberg);
             updateStatePI(regulator->pi, u_2);
@@ -153,7 +155,10 @@ void* run_regulator(void *arg)
             break;
         }
 
-        previous = getMode(regulator->modeMon);
+        previous = current;
+
+        current = getMode(regulator->modeMon);
+        
         sendDataToOpCom(yRef, y_position, u_2, &start, dataMonitor);
 
         clock_t end = clock();
