@@ -14,7 +14,7 @@ SRC_MAIN := $(SRC_DIR)/Main.c $(SRC_DIR)/DataMonitor.c $(SRC_DIR)/modeMonitor.c 
 
 OBJ_REGULATOR := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_REGULATOR))
 OBJ_RECEIVER := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_RECEIVER))
-OBJ_MAIN := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_MAIN))
+OBJ_MAIN := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_MAIN)) $(OBJ_DIR)/modeMonitor.o 
 #executables
 EXEC_RECEIVER = $(BIN_DIR)/receiver.so
 EXEC_MAIN = $(BIN_DIR)/Main.out
