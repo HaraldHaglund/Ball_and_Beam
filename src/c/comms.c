@@ -8,7 +8,7 @@
  */
 int startOpcom()
 {
-    char* path = "python3 ./../python/GUI.py"; //change to path of strting the opcom
+    char* path = "python3 ../src/python/GUI.py"; //change to path of strting the opcom
     double* data;
     return write(path, data, 0);
 }
