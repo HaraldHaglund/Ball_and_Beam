@@ -10,14 +10,17 @@ SRC_DIR = ./c
 SRC_REGULATOR := $(SRC_DIR)/regulator.c $(SRC_DIR)/comms.c $(SRC_DIR)/DataMonitor.c
 SRC_RECEIVER := $(SRC_DIR)/receiver.c $(SRC_DIR)/PI.c $(SRC_DIR)/PID.c $(SRC_DIR)/modeMonitor.c $(SRC_DIR)/ReferenceGenerator.c $(SRC_DIR)/DataMonitor.c $(SRC_DIR)/regulator.c
 SRC_MAIN := $(SRC_DIR)/Main.c $(SRC_DIR)/DataMonitor.c $(SRC_DIR)/modeMonitor.c $(SRC_DIR)/PI.c $(SRC_DIR)/PID.c $(SRC_DIR)/ReferenceGenerator.c $(SRC_DIR)/regulator.c $(SRC_DIR)/comms.c
+SRC_TEST := $(SRC_DIR)/test.c
 
 #object files
 OBJ_REGULATOR := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_REGULATOR))
 OBJ_RECEIVER := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_RECEIVER))
 OBJ_MAIN := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_MAIN))
+OBJ_TEST := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_TEST))
 
 #executables
 EXEC_RECEIVER = $(BIN_DIR)/receiver.so
+EXEC_TEST = $(BIN_DIR)/test.so
 EXEC_MAIN = $(BIN_DIR)/Main.out
 
 #Rule for making .o files from .c files
@@ -31,6 +34,9 @@ $(EXEC_RECEIVER): $(OBJ_RECEIVER)
 $(EXEC_MAIN): $(OBJ_MAIN)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
+$(EXEC_TEST): $(OBJ_TEST)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS) $(SHARED_FLAGS)
+	
 .PHONY: clean
 clean:
 	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/*
