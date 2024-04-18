@@ -336,9 +336,3 @@ int shutDownPy()
     }
     return 0;
 }
-
-//logical entry point, is not used for anything ever
-int main()
-{
-    return 0;
-}

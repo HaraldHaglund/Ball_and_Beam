@@ -1,7 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -pthread
+CFLAGS = -Wall -Wextra -pthread -fPIC
 LIBS = -lmoberg -pthread
-SHARED_FLAGS = -shared -fPIC
 
 OBJ_DIR = ../obj
 BIN_DIR = ../bin
@@ -27,7 +26,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 #Rule to build executables
 $(EXEC_RECEIVER): $(OBJ_RECEIVER)
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS) $(SHARED_FLAGS)
+	$(CC) $(CFLAGS) -shared -o $@ $^ $(LIBS)
 
 $(EXEC_MAIN): $(OBJ_MAIN)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
