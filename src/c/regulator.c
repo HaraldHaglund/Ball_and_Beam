@@ -54,7 +54,6 @@ void* run_regulator(void *arg)
     if (!moberg)
     {
         fprintf(stderr, "NEW failed\n");
-        goto out;
     }
 
     struct moberg_analog_out analogOut_1;
@@ -107,19 +106,19 @@ void* run_regulator(void *arg)
             y_position = 0;
             u_2 = 0;
 
-            writeOutput(analogOut_1, u_2, 1);
+            writeOutput(analogOut_1, u_2, 1, moberg);
 
             break;
 
         case BEAM:
 
-            readInput(analogInAngle_1, &y_angle, 1);
-            yRef = getRef(&refgen);
+            readInput(analogInAngle_1, &y_angle, 1, moberg);
+            yRef = getRef(refgen);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
             u_2 = limit(calculateOutputPI(regulator->pi, y_angle, yRef));
-            writeOutput(analogOut_1, u_2, 1);
+            writeOutput(analogOut_1, u_2, 1, moberg);
             updateStatePI(regulator->pi, u_2);
 
             pthread_mutex_unlock(&(regulator->mutex_pi));
@@ -128,8 +127,8 @@ void* run_regulator(void *arg)
 
         case BALL:
 
-            readInput(analogInPosition_1, &y_position, 0);
-            yRef = getRef(&refgen);
+            readInput(analogInPosition_0, &y_position, 0, moberg);
+            yRef = getRef(refgen);
 
             pthread_mutex_lock(&(regulator->mutex_pid));
 
@@ -137,9 +136,9 @@ void* run_regulator(void *arg)
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
-            readInput(analogInAngle_1, &y_angle, 1); 
+            readInput(analogInAngle_1, &y_angle, 1, moberg); 
             u_2 = limit(calculateOutputPI(regulator->pi, y_angle, u_1));
-            writeOutput(analogOut_1, u_2, 1);
+            writeOutput(analogOut_1, u_2, 1, moberg);
             updateStatePI(regulator->pi, u_2);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
@@ -155,7 +154,7 @@ void* run_regulator(void *arg)
         }
 
         previous = getMode(regulator->modeMon);
-        sendDataToOpCom(yRef, y_position, u_2, &start, &dataMonitor);
+        sendDataToOpCom(yRef, y_position, u_2, &start, dataMonitor);
 
         clock_t end = clock();
         duration = (end - start) / (long)CLOCKS_PER_SEC;
@@ -169,7 +168,7 @@ void* run_regulator(void *arg)
         }
     }
 
-    writeOutput(analogOut_1, 0.0, 1);
+    writeOutput(analogOut_1, 0.0, 1, moberg);
     pthread_mutex_destroy(&(regulator->mutex_pi));
     pthread_mutex_destroy(&(regulator->mutex_pid));
 
@@ -178,16 +177,16 @@ free:
     return 0;
 }
 
-void writeOutput(struct moberg_analog_out out, double u, int port)
+void writeOutput(struct moberg_analog_out out, double u, int port, struct moderg *moberg)
 {
-    if (!moberg_OK(ao0.write(ao0.context, u, &u)))
+    if (!moberg_OK(out.write(out.context, u, &u)))
     {
         fprintf(stderr, "READ failed\n");
         moberg_analog_out_close(moberg, port, out);
     }
 }
 
-void readInput(struct moberg_analog_in in, double *value, int port)
+void readInput(struct moberg_analog_in in, double *value, int port, struct moberg *moberg)
 {
     if (!moberg_OK(in.read(in.context, value)))
     {
