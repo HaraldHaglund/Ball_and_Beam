@@ -13,6 +13,7 @@
 #include "comms.h"
 #include "ReferenceGenerator.h"
 #include "modeMonitor.h"
+#include "DataMonitor.h"
 
 typedef struct Regulator_t
 {
