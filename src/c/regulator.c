@@ -26,7 +26,7 @@ void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *da
 
     double t = (double)((current - *start) / (long)CLOCKS_PER_SEC) / 1000;
 
-    putData(&datamonitor, t, yRef, y, u);
+    putData(datamonitor, t, yRef, y, u);
 }
 
 // move this functionality to receiver.c so we can call it from the GUI

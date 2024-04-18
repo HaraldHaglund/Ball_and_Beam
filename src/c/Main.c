@@ -1,7 +1,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include "../../include/DataMonitor.h"
-#include "../../include/ModeMonitor.h"
+#include "../../include/modeMonitor.h"
 #include "../../include/PI.h"
 #include "../../include/PID.h"
 #include "../../include/ReferenceGenerator.h"
@@ -133,10 +133,6 @@ int main()
         perror("Error starting regulator thread");
         return 1;
     }
-
-    // start refGen thread
-
-    pthread_t refGen_thread;
 
     // start GUI
     if (startOpcom() != 0)
