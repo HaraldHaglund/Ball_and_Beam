@@ -177,7 +177,7 @@ free:
     return 0;
 }
 
-void writeOutput(struct moberg_analog_out out, double u, int port, struct moderg *moberg)
+void writeOutput(struct moberg_analog_out out, double u, int port, struct moberg *moberg)
 {
     if (!moberg_OK(out.write(out.context, u, &u)))
     {
