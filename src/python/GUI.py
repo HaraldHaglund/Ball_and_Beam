@@ -3,13 +3,12 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 import numpy as np
-import random
-
-# import comms as c
+import comms as c
 
 # Global variables
 dataOut = np.array([])
 dataRef = np.array([])
+dataCon = np.array([])
 tracking_time = 10.0  # seconds
 h = 10  # ms
 xRef = []
@@ -19,9 +18,22 @@ squarePeriodTime = 3.0
 squareAmp = 5.0
 manualAmp = 0
 iteration = 0
+max_ctrl = 0.2
 is_manual = True  # Default selection
 is_square = False
 is_time_optimal = False
+OFF = 0
+BEAM = 1
+BALL = 2
+
+# PID Inner Values
+inner_K, inner_Ti, inner_Tr, inner_beta, inner_H, inner_integratorOn = c.getInnerParameters()
+
+# PID Outer Values
+outer_K, outer_Ti, outer_Td, outer_Tr, outer_N, outer_beta, outer_H, outer_integratorOn = c.getOuterParameters()
+
+# Set initial mode to OFF.
+c.setMode(OFF)
 
 # Initialize root window
 root = tk.Tk()
@@ -51,14 +63,16 @@ settings.pack(side=tk.BOTTOM)
 
 # Radio-buttons
 options = ['Off', 'Beam', 'Ball']
+options_cmd = [OFF, BEAM, BALL]
 x = tk.IntVar()  # Define x as integer object
 for i in range(len(options)):
-    button = tk.Radiobutton(settings, text=options[i], variable=x, value=i, padx=2, font=('Courier', 20), width=4)
+    button = tk.Radiobutton(settings, text=options[i], variable=x, value=i, padx=2, font=('Courier', 20),
+                            width=4, command=lambda cmd=options_cmd[i]: c.setMode(cmd))
     # Put settings as a grid
     button.grid(row=0, column=i)
 
 # Stop-button
-stop = tk.Button(settings, text='Stop', font=('Courier', 20), width=20)
+stop = tk.Button(settings, text='Stop', font=('Courier', 20), width=20, command=c.shutDown)
 stop.grid(row=1, column=1)
 
 # Create frame for header text
@@ -128,23 +142,30 @@ slider.pack(side=tk.LEFT, expand=True)
 
 
 def assign_values():
-    global squareAmp, squarePeriodTime, iteration
+    global squareAmp, squarePeriodTime, iteration, max_ctrl
     Amp = entry_widgets[0].get()
     PeriodTime = entry_widgets[1].get()
+    MaxCtrl = entry_widgets[2].get()
     # Check if the text is not empty
     iteration = 0
     if Amp:
         try:
             squareAmp = float(Amp)
         except ValueError:
-            print('error')
+            print('Error: Wrong entry')
             return
 
     if PeriodTime:
         try:
             squarePeriodTime = float(PeriodTime)
         except ValueError:
-            print('error')
+            print('Error: Wrong entry')
+            return
+    if MaxCtrl:
+        try:
+            max_ctrl = float(MaxCtrl)
+        except ValueError:
+            print('Error: Wrong entry')
             return
 
 
@@ -153,7 +174,7 @@ references.pack(side=tk.TOP, expand=True)
 
 param3 = ['Amp', 'Period', 'Max ctrl']
 entry_widgets = []
-start_values = [str(squareAmp), str(squarePeriodTime), '0.2']
+start_values = [str(squareAmp), str(squarePeriodTime), str(max_ctrl)]
 
 for i in range(len(param3)):
     label = tk.Label(references, text=param3[i], font=('Courier', 20), width=10)
@@ -222,30 +243,55 @@ canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 
 def update(frame):
-    global dataOut, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal
+    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal
     xRef.append(index)  # This counts the iterations for the x-axis
 
     # Append data to dataOut
-    dummy = random.randrange(-10, 10)  # This should be changed to the actual output signal
-    dataOut = np.append(dataOut, dummy)
-
+    measurementData = c.getMeasurementData()[2]
+    dataOut = np.append(dataOut, measurementData)
+    controlData = c.getControlData()[1]
+    dataCon = np.append(dataCon, controlData)
     # Append data to dataRef
     if is_square:
-        if iteration > squarePeriodTime*fps:  # TODO: This leads to an error due to (%) ints with float
+        if iteration > squarePeriodTime * fps:
             squareAmp *= -1
-            iteration=0
+            iteration = 0
         dataRef = np.append(dataRef, squareAmp)
     elif is_manual:
         dataRef = np.append(dataRef, manualAmp)
     elif is_time_optimal:
-        # TODO: Write time optimal case here
+        # Calculate time optimal control parameters
+        #ts = 0  # Assuming starting time is 0 (wrong)
+        #z0 = 0  # Initial reference value
+        #new_setpoint = 10  # Example new setpoint value
+        #distance = new_setpoint - z0  # Calculate distance to new setpoint
+        #K_PHI = 1  # Example constant
+        #K_V = 1  # Example constant
+
+        #u0 = np.sign(distance) * max_ctrl
+        #T = np.cbrt(np.abs(distance) / (2.0 * K_PHI * K_V * max_ctrl))
+        #tf = ts + 4.0 * T  # Calculate final time
+        #setpoint = new_setpoint  # Update setpoint
+
+        # Assuming a constant control input for the duration
+        #control_input = np.full(int(tf * fps), u0)
+        #dataRef = np.append(dataRef, control_input)
         pass
+
     # Update x-axis limits dynamically
     axRef.set_xlim(max(0.0, index - tracking_time), max(tracking_time, index))
+
+    axCon.set_xlim(max(0.0, index - tracking_time), max(tracking_time, index))
+
     linesOut.set_data(xRef, dataOut)
     linesRef.set_data(xRef, dataRef)
+    linesCon.set_data(xRef, dataCon)
+
     index += 1 / fps
     iteration += 1
+
+    c.setRef(dataRef)  # Send the reference to our C program
+
     return linesOut,  # Return the new changes. This is to just plot the new data using "blit"
 
 
