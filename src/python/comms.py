@@ -1,6 +1,6 @@
 import ctypes
 
-comms_lib = ctypes.CDLL('./receiver.so')
+comms_lib = ctypes.CDLL('./receiver.so',  ctypes.RTLD_GLOBAL)
 
 
 def setInnerParameters(K, Ti, Tr, beta, H, integratorOn):
