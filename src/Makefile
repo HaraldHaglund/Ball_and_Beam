@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -pthread -fPIC
-#LIBS = -lmoberg -pthread
-LIBS = -pthread
+LIBS = -lmoberg -pthread
+#LIBS = -pthread
 
 OBJ_DIR = ../obj
 BIN_DIR = ../bin
