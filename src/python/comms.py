@@ -138,7 +138,7 @@ def setRef(newRef):
     setRef_c.argtypes = [ctypes.c_double]
 
     setRef_c.restype = ctypes.c_int
-    return setRef_c(2.0)
+    return setRef_c(10.0)
 
 def shutDown():
     """
