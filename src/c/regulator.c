@@ -163,7 +163,7 @@ void *run_regulator(void *arg)
         sendDataToOpCom(yRef, y_position, u_2, &start, dataMonitor);
 
         clock_t end = clock();
-        duration = (end - start) / (long)CLOCKS_PER_SEC;
+        duration = (double)(end - start) / CLOCKS_PER_SEC;
 	printf("Duration: %ld\n", duration);
         if (duration > 0)
         {
