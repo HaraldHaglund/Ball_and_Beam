@@ -1,6 +1,6 @@
 import ctypes
 
-comms_lib = ctypes.CDLL('../../bin/receiver.so')
+comms_lib = ctypes.CDLL('./receiver.so',  ctypes.RTLD_GLOBAL)
 
 
 def setInnerParameters(K, Ti, Tr, beta, H, integratorOn):
@@ -93,7 +93,7 @@ def getOuterParameters():
     """
 
     getOuterParameters_c = comms_lib.getOuterParameters
-    getOuterParameters_c.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_int)]
+    getOuterParameters_c.argtypes = [ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_int)]
     getOuterParameters_c.restype = ctypes.c_int
 
     K = ctypes.c_double()
@@ -135,7 +135,7 @@ def setRef(newRef):
         int: 0 if sucessfull, non-0 of not 
     """
     setRef_c = comms_lib.setRefPy
-    setRef_c.argtypes = [ctypes.double]
+    setRef_c.argtypes = [ctypes.c_double]
 
     setRef_c.restype = ctypes.c_int
     return setRef_c(newRef)

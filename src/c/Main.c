@@ -134,7 +134,7 @@ int main()
         return 1;
     }
 
-    // start GUI
+    // start GUI Need to start a separate thread that runs this otrherwise main gets stuck here.
     if (startOpcom() != 0)
     {
         return -1;
