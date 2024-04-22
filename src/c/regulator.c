@@ -167,7 +167,7 @@ void *run_regulator(void *arg)
 
         clock_t end = clock();
         duration = timebase - (double)(end) / CLOCKS_PER_SEC;
-        printf("Duration: %ld\n", duration);
+        printf("Duration: %f\n", duration);
         if (duration > 0)
         {
             sleep(duration);
