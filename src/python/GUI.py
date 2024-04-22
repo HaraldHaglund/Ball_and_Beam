@@ -25,6 +25,8 @@ is_time_optimal = False
 OFF = 0
 BEAM = 1
 BALL = 2
+i = 0
+referenceSignal = 0
 
 # PID Inner Values
 inner_K, inner_Ti, inner_Tr, inner_beta, inner_H, inner_integratorOn = c.getInnerParameters()
@@ -247,7 +249,7 @@ canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 
 def update(frame):
-    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal
+    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal
     xRef.append(index)  # This counts the iterations for the x-axis
 
     # Append data to dataOut
@@ -261,8 +263,10 @@ def update(frame):
             squareAmp *= -1
             iteration = 0
         dataRef = np.append(dataRef, squareAmp)
+        referenceSignal = squareAmp
     elif is_manual:
         dataRef = np.append(dataRef, manualAmp)
+        referenceSignal = manualAmp
     elif is_time_optimal:
         # Calculate time optimal control parameters
         #ts = 0  # Assuming starting time is 0 (wrong)
@@ -293,8 +297,10 @@ def update(frame):
 
     index += 1 / fps
     iteration += 1
+    i += 1
 
-    c.setRef(dataRef)  # Send the reference to our C program
+    print(referenceSignal)
+    c.setRef(referenceSignal)
 
     return linesOut,  # Return the new changes. This is to just plot the new data using "blit"
 
