@@ -299,7 +299,6 @@ def update(frame):
     iteration += 1
     i += 1
 
-    print(referenceSignal)
     c.setRef(referenceSignal)
 
     return linesOut,  # Return the new changes. This is to just plot the new data using "blit"
