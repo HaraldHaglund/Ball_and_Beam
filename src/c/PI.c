@@ -46,10 +46,10 @@ void updateStatePI(PI_t *pi, double u)
     pthread_mutex_unlock(&(pi->mutex));
 }
 
-long getHMillisPI(PI_t *pi)
+double getHPI(PI_t *pi)
 {
     pthread_mutex_lock(&(pi->mutex));
-    long h = (long)(pi->H * 1000.0);
+    double h = pi->H;
     pthread_mutex_unlock(&(pi->mutex));
     return h;
 }

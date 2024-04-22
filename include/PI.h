@@ -24,7 +24,7 @@ void initialize_PI(PI_t *pi);
 void destroy_PI(PI_t *pi);
 double calculateOutputPI(PI_t *pi, double y, double yref);
 void updateStatePI(PI_t *pi, double u);
-long getHMillisPI(PI_t *pi);
+double getHPI(PI_t *pi);
 void setParametersPI(PI_t *pi, double K, double Ti, double Tr, double Beta, double H, bool integratorOn);
 void getParametersPI(PI_t *pi, double *K, double *Ti, double *Tr, double *Beta, double *H, int *integratorOn);
 void resetPI(PI_t *pi);

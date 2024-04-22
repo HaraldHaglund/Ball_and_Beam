@@ -50,10 +50,10 @@ void updateStatePID(PID_t *pid, double u)
     pthread_mutex_unlock(&(pid->mutex));
 }
 
-long getHMillisPID(PID_t *pid)
+double getHPID(PID_t *pid)
 {
     pthread_mutex_lock(&(pid->mutex));
-    long h = (long)(pid->H * 1000.0);
+    double h = pid->H;
     pthread_mutex_unlock(&(pid->mutex));
     return h;
 }

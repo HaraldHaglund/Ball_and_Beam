@@ -79,11 +79,12 @@ void *run_regulator(void *arg)
         goto free;
     }
 
-    long duration;
-    clock_t start = clock();
+    double duration;
     int current = getMode(regulator->modeMon);
     int previous = current;
 
+    clock_t start = clock();
+    double timebase = (double)(start) / CLOCKS_PER_SEC;
     double yRef = 0;
     double y_position = 0;
     double y_angle = 0;
@@ -116,7 +117,7 @@ void *run_regulator(void *arg)
 
             readInput(analogInAngle_1, &y_angle, 1, moberg);
             yRef = getRef(regulator->refGen);
-	    printf("yRef: %f\n", yRef);
+            printf("yRef: %f\n", yRef);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
@@ -159,19 +160,21 @@ void *run_regulator(void *arg)
         previous = current;
 
         current = getMode(regulator->modeMon);
-        
+
         sendDataToOpCom(yRef, y_position, u_2, &start, dataMonitor);
 
+        timebase += getHPID(regulator->pid);
+
         clock_t end = clock();
-        duration = (double)(end - start) / CLOCKS_PER_SEC;
-	printf("Duration: %ld\n", duration);
+        duration = timebase - (double)(end) / CLOCKS_PER_SEC;
+        printf("Duration: %ld\n", duration);
         if (duration > 0)
         {
             sleep(duration);
         }
         else
         {
-	  //printf("Lagging behind...");
+            printf("Lagging behind...");
         }
     }
 
@@ -187,7 +190,7 @@ free:
 
 void writeOutput(struct moberg_analog_out out, double u, int port, struct moberg *moberg)
 {
-  printf("writeOutput: %f\n", u);
+    printf("writeOutput: %f\n", u);
     if (!moberg_OK(out.write(out.context, u, &u)))
     {
         fprintf(stderr, "WRITE failed\n");
