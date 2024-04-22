@@ -16,9 +16,9 @@ void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMoni
     pthread_mutex_init(&(regulator->mutex_pid), NULL);
 }
 
-void set_reference_generator(Regulator_t *regul, ReferenceGenerator_t *refgen)
+void set_reference_generator(Regulator_t *regul, ReferenceGenerator_t *refGen)
 {
-    regul->refgen = refgen;
+    regul->refGen = refGen;
 }
 
 void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *datamonitor)
@@ -118,8 +118,8 @@ void *run_regulator(void *arg)
 
             readInput(analogInAngle_1, &y_angle, 1, moberg);
 	    printf("y_angle: %f\n", y_angle);
-	    printf("period from refgen: %f\n", regulator->refgen->period);
-            yRef = getRef(regulator->refgen);
+	    printf("period from refGen: %f\n", regulator->refGen->period);
+            yRef = getRef(regulator->refGen);
 	    printf("yRef: %f\n", yRef);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
@@ -135,7 +135,7 @@ void *run_regulator(void *arg)
         case BALL:
 
             readInput(analogInPosition_0, &y_position, 0, moberg);
-            yRef = getRef(regulator->refgen);
+            yRef = getRef(regulator->refGen);
 
             pthread_mutex_lock(&(regulator->mutex_pid));
 
