@@ -81,9 +81,7 @@ void *run_regulator(void *arg)
 
     long duration;
     clock_t start = clock();
-    printf("fore\n");
     int current = getMode(regulator->modeMon);
-    printf("mode regulator: %d\n", current);
     int previous = current;
 
     double yRef = 0;
@@ -117,8 +115,6 @@ void *run_regulator(void *arg)
         case BEAM:
 
             readInput(analogInAngle_1, &y_angle, 1, moberg);
-	    printf("y_angle: %f\n", y_angle);
-	    printf("period from refGen: %f\n", regulator->refGen->period);
             yRef = getRef(regulator->refGen);
 	    printf("yRef: %f\n", yRef);
 
@@ -168,6 +164,7 @@ void *run_regulator(void *arg)
 
         clock_t end = clock();
         duration = (end - start) / (long)CLOCKS_PER_SEC;
+	printf("Duration: %ld\n", duration);
         if (duration > 0)
         {
             sleep(duration);
@@ -190,9 +187,10 @@ free:
 
 void writeOutput(struct moberg_analog_out out, double u, int port, struct moberg *moberg)
 {
+  printf("writeOutput: %f\n", u);
     if (!moberg_OK(out.write(out.context, u, &u)))
     {
-        fprintf(stderr, "READ failed\n");
+        fprintf(stderr, "WRITE failed\n");
         moberg_analog_out_close(moberg, port, out);
     }
 }
