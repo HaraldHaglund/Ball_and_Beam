@@ -3,10 +3,10 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 import numpy as np
-import comms_dum as c
+import comms as c
 
 # Global variables
-dataOut = np.array([])
+dataOut = np.array([])  # TODO: Clean these three arrays!
 dataRef = np.array([])
 dataCon = np.array([])
 tracking_time = 10.0  # seconds
