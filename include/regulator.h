@@ -19,7 +19,7 @@ typedef struct Regulator_t
 {
     PI_t *pi;
     PID_t *pid;
-    ReferenceGenerator_t *refgen;
+    ReferenceGenerator_t *refGen;
     ModeMonitor_t *modeMon;
     bool should_run;
     pthread_mutex_t mutex_pi;

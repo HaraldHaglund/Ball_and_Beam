@@ -115,7 +115,7 @@ int main()
     initialize_PID(PID);
     initialize_referenceGenerator(refGen);
     initialize_DataMonitor(data_monitor);
-    initialize_regulator(regulator, PI, PID, mode_monitor);
+    initialize_regulator(regulator, PI, PID, mode_monitor, refGen);
 
     printf("period from main: %f\n", refGen->period);
 

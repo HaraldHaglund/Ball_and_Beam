@@ -5,10 +5,11 @@
 #define MAX (10)
 #define MIN (-10)
 
-void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMonitor_t *modeMon)
+void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMonitor_t *modeMon, ReferenceGenerator_t *refGen)
 {
     regulator->pi = pi;
     regulator->pid = pid;
+    regulator->refGen = refGen;
     regulator->modeMon = modeMon;
     regulator->should_run = true;
     pthread_mutex_init(&(regulator->mutex_pi), NULL);
