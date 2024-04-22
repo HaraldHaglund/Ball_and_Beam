@@ -3,7 +3,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 import numpy as np
-import comms as c
+import comms_dum as c
 
 # Global variables
 dataOut = np.array([])
@@ -133,23 +133,26 @@ for i in range(len(param2)):
 # Apply buttons
 def assignInner():
     global inner_K, inner_Ti, inner_Tr, inner_beta, inner_H, inner_integratorOn
-    inner_K = button_inner_values[0].get()
-    inner_Ti = button_inner_values[1].get()
-    inner_Tr = button_inner_values[2].get()
-    inner_beta = button_inner_values[3].get()
-    inner_H = button_inner_values[4].get()
+    inner_K = int(button_inner_values[0].get())
+    inner_Ti = int(button_inner_values[1].get())
+    inner_Tr = int(button_inner_values[2].get())
+    inner_beta = int(button_inner_values[3].get())
+    inner_H = int(button_inner_values[4].get())
+    inner_integratorOn = inner_Ti != 0
     c.setInnerParameters(inner_K, inner_Ti, inner_Tr, inner_beta, inner_H, inner_integratorOn)
 
 
 def assignOuter():
     global outer_K, outer_Ti, outer_Td, outer_Tr, outer_N, outer_beta, outer_H, outer_integratorOn
-    outer_K = button_outer_values[0].get()
-    outer_Ti = button_outer_values[1].get()
-    outer_Td = button_outer_values[2].get()
-    outer_Tr = button_outer_values[3].get()
-    outer_N = button_outer_values[4].get()
-    outer_beta = button_outer_values[5].get()
-    outer_H = button_outer_values[6].get()
+    outer_K = int(button_outer_values[0].get())
+    outer_Ti = int(button_outer_values[1].get())
+    outer_Td = int(button_outer_values[2].get())
+    outer_Tr = int(button_outer_values[3].get())
+    outer_N = int(button_outer_values[4].get())
+    outer_beta = int(button_outer_values[5].get())
+    outer_H = int(button_outer_values[6].get())
+
+    outer_integratorOn = outer_Ti != 0
     c.setOuterParameters(outer_K, outer_Ti, outer_Td, outer_Tr, outer_N, outer_beta, outer_H, outer_integratorOn)
 
 

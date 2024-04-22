@@ -16,7 +16,7 @@ def getInnerParameters():
     Tr = 3
     beta = 4
     H = 5
-    integratorOn = False
+    integratorOn = True
 
     print('Retrieved the inner parameters ', K, Ti, Tr, beta, H, integratorOn)
     return K, Ti, Tr, beta, H, integratorOn
@@ -38,7 +38,7 @@ def getOuterParameters():
     N = 3
     beta = 4
     H = 5
-    integratorOn = False
+    integratorOn = True
 
     print('Retrieved the outer parameters ', K, Ti, Td, Tr, N, beta, H, integratorOn)
     return K, Ti, Td, Tr, N, beta, H, integratorOn
