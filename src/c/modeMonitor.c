@@ -1,4 +1,5 @@
 #include "../../include/modeMonitor.h"
+#include <stdio.h>
 
 void initialize_ModeMonitor(ModeMonitor_t *modeMon)
 {
@@ -9,6 +10,7 @@ void initialize_ModeMonitor(ModeMonitor_t *modeMon)
 int setMode(ModeMonitor_t *modeMon, int mode)
 {
     pthread_mutex_lock(&(modeMon->mutex));
+    
     modeMon->mode = mode;
     pthread_mutex_unlock(&(modeMon->mutex));
     return mode;

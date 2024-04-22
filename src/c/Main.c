@@ -117,6 +117,8 @@ int main()
     initialize_DataMonitor(data_monitor);
     initialize_regulator(regulator, PI, PID, mode_monitor);
 
+    printf("period from main: %f\n", refGen->period);
+
     // start threads
 
     // start regul thread, see the run_regulator function and the regulator argument struct in regulator.h

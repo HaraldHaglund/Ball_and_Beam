@@ -80,8 +80,9 @@ void *run_regulator(void *arg)
 
     long duration;
     clock_t start = clock();
-
+    printf("fore\n");
     int current = getMode(regulator->modeMon);
+    printf("mode regulator: %d\n", current);
     int previous = current;
 
     double yRef = 0;
@@ -115,7 +116,10 @@ void *run_regulator(void *arg)
         case BEAM:
 
             readInput(analogInAngle_1, &y_angle, 1, moberg);
+	    printf("y_angle: %f\n", y_angle);
+	    printf("period from refgen: %f\n", regulator->refgen->period);
             yRef = getRef(regulator->refgen);
+	    printf("yRef: %f\n", yRef);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
@@ -169,7 +173,7 @@ void *run_regulator(void *arg)
         }
         else
         {
-            printf("Lagging behind...");
+	  //printf("Lagging behind...");
         }
     }
 
@@ -178,6 +182,7 @@ void *run_regulator(void *arg)
     pthread_mutex_destroy(&(regulator->mutex_pid));
 
 free:
+    printf("freed in regulator\n");
     moberg_free(moberg);
     return 0;
 }

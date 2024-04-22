@@ -197,6 +197,7 @@ int setModePy(int mode)
     }
 
     struct ModeMonitor_t* mm = shmat(shmid, NULL, 0);
+    
     setMode(mm, mode);
 
     if(shmdt(mm) == -1)

@@ -1,4 +1,5 @@
 #include "../../include/ReferenceGenerator.h"
+#include <stdio.h>
 
 void initialize_referenceGenerator(ReferenceGenerator_t *refgen) {
         refgen->amplitude = 5.0;
@@ -62,7 +63,9 @@ void initialize_referenceGenerator(ReferenceGenerator_t *refgen) {
     double getRef(ReferenceGenerator_t *refgen) 
     {
         pthread_mutex_lock(&(refgen->mutex));
+	printf("RefGen inside\n");
         double value = (refgen->mode == MANUAL) ? refgen->manual : refgen->ref;
+	printf("RefGen inside efter\n");
         pthread_mutex_unlock(&(refgen->mutex));
         return value;
     }
