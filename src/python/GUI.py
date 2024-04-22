@@ -37,7 +37,7 @@ c.setMode(OFF)
 
 # Initialize root window
 root = tk.Tk()
-root.geometry("2120x1024")
+root.geometry("1280x512")
 root.option_add('*Font', ("Courier", 15, "bold"))
 root.title("Ball & Beam GUI")
 
@@ -47,19 +47,23 @@ plotFrame = tk.Frame(root)
 referenceFrame = tk.Frame(root)
 
 # Define frames as three column grids
-parameterFrame.grid(row=0, column=0, sticky="ns")
+parameterFrame.grid(row=0, column=0, sticky="nsew")
 plotFrame.grid(row=0, column=1, columnspan=2, sticky="nsew")
 referenceFrame.grid(row=0, column=3, sticky="nsew")
 
 # Set column/row weights to allow resizing
 root.columnconfigure(0, weight=1)
-root.columnconfigure(1, weight=6)
+root.columnconfigure(1, weight=2)
 root.columnconfigure(3, weight=1)
 root.rowconfigure(0, weight=1)
 
 # Create frame for settings (off,beam,ball and stop)
 settings = tk.Frame(parameterFrame)
 settings.pack(side=tk.BOTTOM)
+
+# Stop-button
+stop = tk.Button(settings, text='Stop', font=('Courier', 20), width=20, command=c.shutDown)
+stop.pack(side=tk.BOTTOM)
 
 # Radio-buttons
 options = ['Off', 'Beam', 'Ball']
@@ -69,20 +73,16 @@ for i in range(len(options)):
     button = tk.Radiobutton(settings, text=options[i], variable=x, value=i, padx=2, font=('Courier', 20),
                             width=4, command=lambda cmd=options_cmd[i]: c.setMode(cmd))
     # Put settings as a grid
-    button.grid(row=0, column=i)
-
-# Stop-button
-stop = tk.Button(settings, text='Stop', font=('Courier', 20), width=20, command=c.shutDown)
-stop.grid(row=1, column=1)
+    button.pack(side=tk.LEFT)
 
 # Create frame for header text
 textFrame = tk.Frame(parameterFrame)
 textFrame.pack(side=tk.TOP)
 
 # Header text
-innerpar_label = tk.Label(textFrame, text='Inner Parameters', padx=8, pady=5, font=('Courier', 20, 'bold'))
+innerpar_label = tk.Label(textFrame, text='Inner Parameters', padx=8, pady=5, font=('Courier', 10, 'bold'))
 innerpar_label.grid(row=1, column=0, sticky='e')
-outerpar_label = tk.Label(textFrame, text='Outer Parameters', padx=8, pady=5, font=('Courier', 20, 'bold'))
+outerpar_label = tk.Label(textFrame, text='Outer Parameters', padx=8, pady=5, font=('Courier', 10, 'bold'))
 outerpar_label.grid(row=1, column=1, sticky='e')
 
 # Create frame for parameter buttons
@@ -106,27 +106,27 @@ def on_validate(P):
 param1 = ['K', 'Ti', 'Tr', 'Beta', 'h']
 start_inner = [str(inner_K), str(inner_Ti), str(inner_Tr), str(inner_beta), str(inner_H)]
 for i in range(len(param1)):
-    label = tk.Label(params, text=param1[i], font=('Courier', 20), width=5)
+    label = tk.Label(params, text=param1[i], font=('Courier', 10), width=5, height=1)
     label.grid(row=i, column=0, sticky="nsew")
     button = tk.Entry(params, validate="key", validatecommand=(params.register(on_validate), "%P"),
-                      font=('Courier', 60), width=3)
+                      font=('Courier', 30), width=3)
     button.insert(tk.END, start_inner[i])
     button.grid(row=i, column=1, sticky="nsew")
 
 param2 = ['K', 'Ti', 'Td', 'N', 'Tr', 'Beta', 'h']
 start_outer = [str(outer_K), str(outer_Ti), str(outer_Td), str(outer_N), str(outer_Tr), str(outer_beta), str(outer_H)]
 for i in range(len(param2)):
-    label = tk.Label(params, text=param2[i], font=('Courier', 20), width=5)
+    label = tk.Label(params, text=param2[i], font=('Courier', 10), width=5, height=1)
     label.grid(row=i, column=2, sticky="nsew")
     button = tk.Entry(params, validate="key", validatecommand=(params.register(on_validate), "%P"),
-                      font=('Courier', 60), width=3)
+                      font=('Courier', 30), width=3)
     button.insert(tk.END, start_outer[i])
     button.grid(row=i, column=3, sticky="nsew")
 
 # Apply buttons
-apply1 = tk.Button(params, text='Apply', font=('Courier', 15), width=5, height=3)
+apply1 = tk.Button(params, text='Apply', font=('Courier', 15), width=5, height=1)
 apply1.grid(row=7, column=3, sticky="nsew")
-apply2 = tk.Button(params, text='Apply', font=('Courier', 15), width=5, height=3)
+apply2 = tk.Button(params, text='Apply', font=('Courier', 15), width=5, height=1)
 apply2.grid(row=5, column=1, sticky="nsew")
 
 
@@ -181,10 +181,10 @@ entry_widgets = []
 start_values = [str(squareAmp), str(squarePeriodTime), str(max_ctrl)]
 
 for i in range(len(param3)):
-    label = tk.Label(references, text=param3[i], font=('Courier', 20), width=10)
+    label = tk.Label(references, text=param3[i], font=('Courier', 10), width=10)
     label.grid(row=i, column=0, sticky="nsew")
     button = tk.Entry(references, validate="key", validatecommand=(references.register(on_validate), "%P"),
-                      font=('Courier', 60), width=3)
+                      font=('Courier', 30), width=3)
     button.grid(row=i, column=1, sticky="nsew")
     button.insert(tk.END, start_values[i])  # Insert start value
     entry_widgets.append(button)
@@ -193,7 +193,7 @@ apply3 = tk.Button(references, text='Apply', font=('Courier', 15), width=5, heig
 apply3.grid(row=3, column=1, sticky="nsew")
 
 radiobuttons = tk.Frame(referenceFrame)
-radiobuttons.pack(side=tk.RIGHT)
+radiobuttons.pack(side=tk.LEFT)
 
 
 def set_option():
@@ -218,7 +218,7 @@ def set_option():
 options = ['Manual', 'Square', 'Time-Optimal']
 y = tk.IntVar()  # Define as integer object
 for i in range(len(options)):
-    button = tk.Radiobutton(radiobuttons, text=options[i], variable=y, value=i, padx=2, font=('Courier', 25), width=20,
+    button = tk.Radiobutton(radiobuttons, text=options[i], variable=y, value=i, padx=2, font=('Courier', 15), width=20,
                             height=2, command=set_option)
     # Put settings as a grid
     button.grid(row=i, column=0)  # Adjust column value and alignment
@@ -227,16 +227,16 @@ for i in range(len(options)):
 fig, (axRef, axCon) = plt.subplots(2)
 
 axRef.set_title('Reference and Output signal')
-axRef.set_xlabel('Time')
-axRef.set_ylabel('Position')
+#axRef.set_xlabel('Time')
+#axRef.set_ylabel('Position')
 axRef.set_xlim(0, tracking_time)
 axRef.set_ylim(-10, 10)
 linesOut, = axRef.plot([], [], color='red')
 linesRef, = axRef.plot([], [], color='black')
 
 axCon.set_title('Control signal')
-axCon.set_xlabel('Time')
-axCon.set_ylabel('Position')
+#axCon.set_xlabel('Time')
+#axCon.set_ylabel('Position')
 axCon.set_xlim(0, tracking_time)
 axCon.set_ylim(-10, 10)
 linesCon, = axCon.plot([], [], color='blue')
