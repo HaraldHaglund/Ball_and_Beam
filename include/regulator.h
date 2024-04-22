@@ -32,7 +32,7 @@ typedef struct
     Data_t *data_monitor;
 } regulator_arguments;
 
-void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMonitor_t *modeMon);
+void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMonitor_t *modeMon, ReferenceGenerator_t * refGen);
 void set_reference_generator(Regulator_t *regul, ReferenceGenerator_t *refgen);
 void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *datamonitor);
 void shutDown(Regulator_t *regulator);
