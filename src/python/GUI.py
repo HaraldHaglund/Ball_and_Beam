@@ -107,6 +107,7 @@ def on_validate(P):
 # Parameter buttons
 param1 = ['K', 'Ti', 'Tr', 'Beta', 'h']
 start_inner = [str(inner_K), str(inner_Ti), str(inner_Tr), str(inner_beta), str(inner_H)]
+button_inner_values = []
 for i in range(len(param1)):
     label = tk.Label(params, text=param1[i], font=('Courier', 10), width=5, height=1)
     label.grid(row=i, column=0, sticky="nsew")
@@ -114,9 +115,11 @@ for i in range(len(param1)):
                       font=('Courier', 30), width=3)
     button.insert(tk.END, start_inner[i])
     button.grid(row=i, column=1, sticky="nsew")
+    button_inner_values.append(button)
 
-param2 = ['K', 'Ti', 'Td', 'N', 'Tr', 'Beta', 'h']
-start_outer = [str(outer_K), str(outer_Ti), str(outer_Td), str(outer_N), str(outer_Tr), str(outer_beta), str(outer_H)]
+param2 = ['K', 'Ti', 'Td', 'Tr', 'N', 'Beta', 'h']
+start_outer = [str(outer_K), str(outer_Ti), str(outer_Td), str(outer_Tr), str(outer_N), str(outer_beta), str(outer_H)]
+button_outer_values = []
 for i in range(len(param2)):
     label = tk.Label(params, text=param2[i], font=('Courier', 10), width=5, height=1)
     label.grid(row=i, column=2, sticky="nsew")
@@ -124,11 +127,37 @@ for i in range(len(param2)):
                       font=('Courier', 30), width=3)
     button.insert(tk.END, start_outer[i])
     button.grid(row=i, column=3, sticky="nsew")
+    button_outer_values.append(button)
+
 
 # Apply buttons
-apply1 = tk.Button(params, text='Apply', font=('Courier', 15), width=5, height=1)
+def assignInner():
+    global inner_K, inner_Ti, inner_Tr, inner_beta, inner_H, inner_integratorOn
+    inner_K = button_inner_values[0].get()
+    inner_Ti = button_inner_values[1].get()
+    inner_Tr = button_inner_values[2].get()
+    inner_beta = button_inner_values[3].get()
+    inner_H = button_inner_values[4].get()
+    c.setInnerParameters(inner_K, inner_Ti, inner_Tr, inner_beta, inner_H, inner_integratorOn)
+
+
+def assignOuter():
+    global outer_K, outer_Ti, outer_Td, outer_Tr, outer_N, outer_beta, outer_H, outer_integratorOn
+    outer_K = button_outer_values[0].get()
+    outer_Ti = button_outer_values[1].get()
+    outer_Td = button_outer_values[2].get()
+    outer_Tr = button_outer_values[3].get()
+    outer_N = button_outer_values[4].get()
+    outer_beta = button_outer_values[5].get()
+    outer_H = button_outer_values[6].get()
+    c.setOuterParameters(outer_K, outer_Ti, outer_Td, outer_Tr, outer_N, outer_beta, outer_H, outer_integratorOn)
+
+
+apply1 = tk.Button(params, text='Apply', font=('Courier', 15), width=5, height=1,
+                   command=assignOuter)
 apply1.grid(row=7, column=3, sticky="nsew")
-apply2 = tk.Button(params, text='Apply', font=('Courier', 15), width=5, height=1)
+apply2 = tk.Button(params, text='Apply', font=('Courier', 15), width=5, height=1,
+                   command=assignInner)
 apply2.grid(row=5, column=1, sticky="nsew")
 
 
@@ -229,16 +258,16 @@ for i in range(len(options)):
 fig, (axRef, axCon) = plt.subplots(2)
 
 axRef.set_title('Reference and Output signal')
-#axRef.set_xlabel('Time')
-#axRef.set_ylabel('Position')
+# axRef.set_xlabel('Time')
+# axRef.set_ylabel('Position')
 axRef.set_xlim(0, tracking_time)
 axRef.set_ylim(-10, 10)
 linesOut, = axRef.plot([], [], color='red')
 linesRef, = axRef.plot([], [], color='black')
 
 axCon.set_title('Control signal')
-#axCon.set_xlabel('Time')
-#axCon.set_ylabel('Position')
+# axCon.set_xlabel('Time')
+# axCon.set_ylabel('Position')
 axCon.set_xlim(0, tracking_time)
 axCon.set_ylim(-10, 10)
 linesCon, = axCon.plot([], [], color='blue')
@@ -269,21 +298,21 @@ def update(frame):
         referenceSignal = manualAmp
     elif is_time_optimal:
         # Calculate time optimal control parameters
-        #ts = 0  # Assuming starting time is 0 (wrong)
-        #z0 = 0  # Initial reference value
-        #new_setpoint = 10  # Example new setpoint value
-        #distance = new_setpoint - z0  # Calculate distance to new setpoint
-        #K_PHI = 1  # Example constant
-        #K_V = 1  # Example constant
+        # ts = 0  # Assuming starting time is 0 (wrong)
+        # z0 = 0  # Initial reference value
+        # new_setpoint = 10  # Example new setpoint value
+        # distance = new_setpoint - z0  # Calculate distance to new setpoint
+        # K_PHI = 1  # Example constant
+        # K_V = 1  # Example constant
 
-        #u0 = np.sign(distance) * max_ctrl
-        #T = np.cbrt(np.abs(distance) / (2.0 * K_PHI * K_V * max_ctrl))
-        #tf = ts + 4.0 * T  # Calculate final time
-        #setpoint = new_setpoint  # Update setpoint
+        # u0 = np.sign(distance) * max_ctrl
+        # T = np.cbrt(np.abs(distance) / (2.0 * K_PHI * K_V * max_ctrl))
+        # tf = ts + 4.0 * T  # Calculate final time
+        # setpoint = new_setpoint  # Update setpoint
 
         # Assuming a constant control input for the duration
-        #control_input = np.full(int(tf * fps), u0)
-        #dataRef = np.append(dataRef, control_input)
+        # control_input = np.full(int(tf * fps), u0)
+        # dataRef = np.append(dataRef, control_input)
         pass
 
     # Update x-axis limits dynamically
