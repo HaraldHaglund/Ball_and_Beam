@@ -14,7 +14,6 @@ void initialize_referenceGenerator(ReferenceGenerator_t *refgen) {
         refgen->mode = MANUAL;
     }
 
-
    void setRef(ReferenceGenerator_t *refgen, double newRef) {
         pthread_mutex_lock(&(refgen->mutex));
 	printf("setRef: %f\n", newRef);
