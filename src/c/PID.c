@@ -17,6 +17,7 @@ void initialize_PID(PID_t *pid)
     pid->D = 0.0;
     pid->v = 0.0;
     pid->e = 0.0;
+    pid->y_old = 0.0;
     pthread_mutex_init(&(pid->mutex), NULL); // free this memory!
     pid->ad = pid->Td / (pid->Td + pid->N * pid->H);
     pid->bd = pid->K * pid->ad * pid->N;
@@ -31,9 +32,9 @@ double calculateOutputPID(PID_t *pid, double y, double yref)
 {
     pthread_mutex_lock(&(pid->mutex));
     pid->e = yref - y;
-        pid->D = pid->ad * pid->D - pid->bd * (pid->e - pid->e_old);
-        pid->v = pid->K * (pid->Beta * yref - y) + pid->I + pid->D;
-        pid->e_old = pid->e;
+    pid->D = pid->ad * pid->D - (pid->bd * (y - pid->y_old));
+    pid->v = pid->K * ((pid->Beta * yref) - y) + pid->I + pid->D;
+        pid->y_old = y;
         double v = pid->v;
     pthread_mutex_unlock(&(pid->mutex));
     return v;

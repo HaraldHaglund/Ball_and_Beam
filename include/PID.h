@@ -23,6 +23,7 @@ typedef struct PID_t
     volatile double e_old;
     volatile double ad;
     volatile double bd;
+    volatile double y_old;
     pthread_mutex_t mutex;
 } PID_t;
 

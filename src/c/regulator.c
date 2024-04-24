@@ -24,10 +24,9 @@ void sendDataToOpCom(double yRef, double y, double u, struct timespec *start, Da
     clock_gettime(CLOCK_MONOTONIC_RAW, &current);
     int t_us = (current.tv_sec - start->tv_sec) * 1000000 + (current.tv_nsec - start->tv_nsec) / 1000;
     double t = (double)t_us / 1000000;
-
-    printf("y redline: %f", y);
     putData(datamonitor, t, yRef, y, u);
 }
+
 
 // move this functionality to receiver.c so we can call it from the GUI
 void shutDown(Regulator_t *regulator)
@@ -117,9 +116,7 @@ void *run_regulator(void *arg)
         case BEAM:
 
             readInput(analogInAngle_1, &y_angle, 1, moberg);
-            printf("input angle: %f \n", y_angle);
             yRef = getRef(regulator->refGen);
-	    printf("yRef: %f\n", yRef);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
@@ -154,6 +151,12 @@ void *run_regulator(void *arg)
 
             pthread_mutex_unlock(&(regulator->mutex_pid));
 	    sendDataToOpCom(yRef, y_position, u_2, &start_time_abs, dataMonitor);
+	    printf("ypos: %f\n", y_position);
+	    printf("yang: %f\n", y_angle);
+	    printf("yref: %f\n", yRef);
+	    printf("PID_out: %f\n", u_1);
+	    printf("PI_out: %f\n", u_2);
+	    
             break;
 
         default:
