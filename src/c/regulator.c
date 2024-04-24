@@ -2,6 +2,7 @@
 #include "../../include/comms.h"
 #include "../../include/DataMonitor.h"
 #include <time.h>
+#include<stdio.h>
 
 #define MAX (10)
 #define MIN (-10)
@@ -17,12 +18,13 @@ void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMoni
     pthread_mutex_init(&(regulator->mutex_pid), NULL);
 }
 
-void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *datamonitor)
+void sendDataToOpCom(double yRef, double y, double u, timespec *start, Data_t *datamonitor)
 {
-    clock_t current = clock();
-
-    double t = (double)((current - *start) / (long)CLOCKS_PER_SEC) / 1000000;
-
+  timespec current;
+  clock_gettime(CLOCK_MONOTONIC_RAW, &current);
+    int t_us = (current.tv_sec - start_time_abs.tv_sec) * 1000000 + (current.tv_nsec - start_time_abs.tv_nsec) / 1000;
+    double t = (double)t_us/1000000;
+    
     putData(datamonitor, t, yRef, y, u);
 }
 
@@ -76,12 +78,12 @@ void *run_regulator(void *arg)
     }
 
     double duration;
-    int itteration = 0;
     int current = getMode(regulator->modeMon);
     int previous = current;
     
-    struct timespec start_time, end_time;
+    struct timespec start_time, end_time, start_time_abs;
     clock_gettime(CLOCK_MONOTONIC_RAW, &start_time);
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start_time_abs);
 
     double yRef = 0;
     double y_position = 0;
@@ -114,13 +116,12 @@ void *run_regulator(void *arg)
         case BEAM:
 
             readInput(analogInAngle_1, &y_angle, 1, moberg);
+	    printf("input angle: %f \n", y_angle);
             yRef = getRef(regulator->refGen);
-            printf("yRef: %f\n", yRef);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
             u_2 = limit(calculateOutputPI(regulator->pi, y_angle, yRef));
-	    //printf("u_2: %f\n", u_2);
             writeOutput(analogOut_1, u_2, 1, moberg);
             updateStatePI(regulator->pi, u_2);
 
@@ -160,12 +161,14 @@ void *run_regulator(void *arg)
 
         current = getMode(regulator->modeMon);
 
-	// sendDataToOpCom(yRef, y_position, u_2, &start, dataMonitor);
+	sendDataToOpCom(yRef, y_position, u_2, &start_time_abs, dataMonitor);
 
 	clock_gettime(CLOCK_MONOTONIC_RAW, &end_time);
 
         int tot_time = (end_time.tv_sec - start_time.tv_sec) * 1000000 + (end_time.tv_nsec - start_time.tv_nsec) / 1000;
+	
 	duration = getHPID(regulator->pid)*1000000 - tot_time;
+	
         if (duration > 0)
         {
             usleep(duration);
@@ -174,6 +177,7 @@ void *run_regulator(void *arg)
         {
             printf("Lagging behind...");
         }
+	
 	start_time.tv_nsec += getHPID(regulator->pid)*1000000000;
     }
 

@@ -65,7 +65,6 @@ void initialize_referenceGenerator(ReferenceGenerator_t *refgen) {
     {
         pthread_mutex_lock(&(refgen->mutex));
         double value = refgen->ref; //(refgen->mode == MANUAL) ? refgen->manual : refgen->ref;
-	printf("getRef: %f\n", value);
         pthread_mutex_unlock(&(refgen->mutex));
         return value;
     }
