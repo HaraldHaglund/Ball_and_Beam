@@ -295,7 +295,7 @@ def update(frame):
             squareAmp *= -1
             iteration = 0
         dataRef = np.append(dataRef, squareAmp)
-        referenceeSignal = squareAmp
+        referenceSignal = squareAmp
     elif is_manual:
         dataRef = np.append(dataRef, manualAmp)
         referenceSignal = manualAmp

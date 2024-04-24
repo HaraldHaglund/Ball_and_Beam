@@ -148,7 +148,7 @@ void *run_regulator(void *arg)
             writeOutput(analogOut_1, u_2, 1, moberg);
             updateStatePI(regulator->pi, u_2);
 
-            pthread_mutex_lock(&(regulator->mutex_pi));
+            pthread_mutex_unlock(&(regulator->mutex_pi));
 
             updateStatePID(regulator->pid, u_1);
 
