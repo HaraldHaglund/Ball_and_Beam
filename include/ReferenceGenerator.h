@@ -17,7 +17,6 @@ typedef struct ReferenceGenerator_t
     volatile double ref;
     volatile double uff;
     volatile double phiff;
-    volatile double manual;
     volatile int mode;
     bool ampChanged, periodChanged, maxCtrlChanged;
     bool parChanged;
@@ -28,7 +27,6 @@ void initialize_referenceGenerator(ReferenceGenerator_t *refgen);
 void setRef(ReferenceGenerator_t *refgen, double newRef);
 void setParChanged(ReferenceGenerator_t *refgen);
 bool getParChanged(ReferenceGenerator_t *refgen);
-void setManual(ReferenceGenerator_t *refgen, double newManual);
 void setSqMode(ReferenceGenerator_t *refgen);
 void setManMode(ReferenceGenerator_t *refgen);
 void setOptMode(ReferenceGenerator_t *refgen);
