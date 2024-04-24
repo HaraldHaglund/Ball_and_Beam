@@ -5,7 +5,7 @@
 
 void initialize_PID(PID_t *pid)
 {
-    pid->K = 0.13;
+    pid->K = -0.13;
     pid->Ti = 5.0;
     pid->Tr = 10.0;
     pid->Td = 1.6;
