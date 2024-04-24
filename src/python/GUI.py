@@ -3,7 +3,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 import numpy as np
-import comms as c
+import comms_dum as c
 
 # Global variables
 dataOut = np.array([])  # TODO: Clean these three arrays!
@@ -295,7 +295,7 @@ def update(frame):
             squareAmp *= -1
             iteration = 0
         dataRef = np.append(dataRef, squareAmp)
-        referenceSignal = squareAmp
+        referenceeSignal = squareAmp
     elif is_manual:
         dataRef = np.append(dataRef, manualAmp)
         referenceSignal = manualAmp
