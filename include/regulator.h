@@ -33,7 +33,7 @@ typedef struct
 } regulator_arguments;
 
 void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMonitor_t *modeMon, ReferenceGenerator_t *refGen);
-void sendDataToOpCom(double yRef, double y, double u, clock_t *start, Data_t *datamonitor);
+void sendDataToOpCom(double yRef, double y, double u, timespec *start, Data_t *datamonitor);
 void shutDown(Regulator_t *regulator);
 double limit(double v);
 void *run_regulator(void *arg);
