@@ -3,7 +3,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 import numpy as np
-import comms as c
+import comms_dum as c
 
 # Global variables
 dataOut = np.array([])  # TODO: Clean these three arrays!
@@ -27,6 +27,7 @@ BEAM = 1
 BALL = 2
 i = 0
 referenceSignal = 0
+oldreferenceSignal = 0
 
 # PID Inner Values
 inner_K, inner_Ti, inner_Tr, inner_beta, inner_H, inner_integratorOn = c.getInnerParameters()
@@ -281,7 +282,7 @@ canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 
 def update(frame):
-    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal
+    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal, oldreferenceSignal
     xRef.append(index)  # This counts the iterations for the x-axis
 
     # Append data to dataOut
@@ -295,9 +296,12 @@ def update(frame):
             squareAmp *= -1
             iteration = 0
         dataRef = np.append(dataRef, squareAmp)
+
+        oldreferenceSignal = referenceSignal
         referenceSignal = squareAmp
     elif is_manual:
         dataRef = np.append(dataRef, manualAmp)
+        oldreferenceSignal = referenceSignal
         referenceSignal = manualAmp
     elif is_time_optimal:
         # Calculate time optimal control parameters
@@ -331,7 +335,8 @@ def update(frame):
     iteration += 1
     i += 1
 
-    c.setRef(referenceSignal)
+    if referenceSignal != oldreferenceSignal:
+        c.setRef(referenceSignal)
 
     return linesOut,  # Return the new changes. This is to just plot the new data using "blit"
 
