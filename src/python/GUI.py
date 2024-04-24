@@ -282,7 +282,7 @@ canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 
 def update(frame):
-    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal
+    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal, oldreferenceSignal
     xRef.append(index)  # This counts the iterations for the x-axis
 
     # Append data to dataOut
@@ -333,7 +333,6 @@ def update(frame):
     index += 1 / fps
     iteration += 1
     i += 1
-
 
     if referenceSignal != oldreferenceSignal:
         c.setRef(referenceSignal)
