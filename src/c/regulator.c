@@ -2,7 +2,7 @@
 #include "../../include/comms.h"
 #include "../../include/DataMonitor.h"
 #include <time.h>
-#include<stdio.h>
+#include <stdio.h>
 
 #define MAX (10)
 #define MIN (-10)
@@ -18,13 +18,13 @@ void initialize_regulator(Regulator_t *regulator, PI_t *pi, PID_t *pid, ModeMoni
     pthread_mutex_init(&(regulator->mutex_pid), NULL);
 }
 
-void sendDataToOpCom(double yRef, double y, double u, timespec *start, Data_t *datamonitor)
+void sendDataToOpCom(double yRef, double y, double u, struct timespec *start, Data_t *datamonitor)
 {
-  timespec current;
-  clock_gettime(CLOCK_MONOTONIC_RAW, &current);
+    struct timespec current;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &current);
     int t_us = (current.tv_sec - start.tv_sec) * 1000000 + (current.tv_nsec - start.tv_nsec) / 1000;
-    double t = (double)t_us/1000000;
-    
+    double t = (double)t_us / 1000000;
+
     putData(datamonitor, t, yRef, y, u);
 }
 
@@ -80,7 +80,7 @@ void *run_regulator(void *arg)
     double duration;
     int current = getMode(regulator->modeMon);
     int previous = current;
-    
+
     struct timespec start_time, end_time, start_time_abs;
     clock_gettime(CLOCK_MONOTONIC_RAW, &start_time);
     clock_gettime(CLOCK_MONOTONIC_RAW, &start_time_abs);
@@ -116,7 +116,7 @@ void *run_regulator(void *arg)
         case BEAM:
 
             readInput(analogInAngle_1, &y_angle, 1, moberg);
-	    printf("input angle: %f \n", y_angle);
+            printf("input angle: %f \n", y_angle);
             yRef = getRef(regulator->refGen);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
@@ -161,14 +161,14 @@ void *run_regulator(void *arg)
 
         current = getMode(regulator->modeMon);
 
-	sendDataToOpCom(yRef, y_position, u_2, &start_time_abs, dataMonitor);
+        sendDataToOpCom(yRef, y_position, u_2, &start_time_abs, dataMonitor);
 
-	clock_gettime(CLOCK_MONOTONIC_RAW, &end_time);
+        clock_gettime(CLOCK_MONOTONIC_RAW, &end_time);
 
         int tot_time = (end_time.tv_sec - start_time.tv_sec) * 1000000 + (end_time.tv_nsec - start_time.tv_nsec) / 1000;
-	
-	duration = getHPID(regulator->pid)*1000000 - tot_time;
-	
+
+        duration = getHPID(regulator->pid) * 1000000 - tot_time;
+
         if (duration > 0)
         {
             usleep(duration);
@@ -177,8 +177,8 @@ void *run_regulator(void *arg)
         {
             printf("Lagging behind...");
         }
-	
-	start_time.tv_nsec += getHPID(regulator->pid)*1000000000;
+
+        start_time.tv_nsec += getHPID(regulator->pid) * 1000000000;
     }
 
     writeOutput(analogOut_1, 0.0, 1, moberg);
