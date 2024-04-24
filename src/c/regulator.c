@@ -119,6 +119,7 @@ void *run_regulator(void *arg)
             readInput(analogInAngle_1, &y_angle, 1, moberg);
             printf("input angle: %f \n", y_angle);
             yRef = getRef(regulator->refGen);
+	    printf("yRef: %f\n", yRef);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 

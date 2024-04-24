@@ -4,7 +4,6 @@
 void initialize_referenceGenerator(ReferenceGenerator_t *refgen) {
         refgen->amplitude = 5.0;
         refgen->period = 15.0; 
-        refgen->manual = 0.0;
         refgen->ref = 0.0;
         refgen->max_ctrl = 0.1;
         refgen->sign = -1.0;
@@ -34,13 +33,6 @@ void initialize_referenceGenerator(ReferenceGenerator_t *refgen) {
         return val;
     }
 
-
-    void setManual(ReferenceGenerator_t *refgen, double newManual) {
-        pthread_mutex_lock(&(refgen->mutex));
-        refgen->manual = newManual;
-        pthread_mutex_unlock(&(refgen->mutex));
-    }
-
     void setSqMode(ReferenceGenerator_t *refgen) {
         pthread_mutex_lock(&(refgen->mutex));
         refgen->mode = SQUARE;
@@ -62,7 +54,7 @@ void initialize_referenceGenerator(ReferenceGenerator_t *refgen) {
     double getRef(ReferenceGenerator_t *refgen) 
     {
         pthread_mutex_lock(&(refgen->mutex));
-        double value = refgen->ref; //(refgen->mode == MANUAL) ? refgen->manual : refgen->ref;
+        double value = refgen->ref;
         pthread_mutex_unlock(&(refgen->mutex));
         return value;
     }
