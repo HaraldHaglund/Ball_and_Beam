@@ -25,6 +25,7 @@ void sendDataToOpCom(double yRef, double y, double u, struct timespec *start, Da
     int t_us = (current.tv_sec - start->tv_sec) * 1000000 + (current.tv_nsec - start->tv_nsec) / 1000;
     double t = (double)t_us / 1000000;
 
+    printf("y redline: %f", y);
     putData(datamonitor, t, yRef, y, u);
 }
 
@@ -126,6 +127,7 @@ void *run_regulator(void *arg)
             updateStatePI(regulator->pi, u_2);
 
             pthread_mutex_unlock(&(regulator->mutex_pi));
+	    sendDataToOpCom(yRef, y_angle, u_2, &start_time_abs, dataMonitor);
 
             break;
 
@@ -150,6 +152,7 @@ void *run_regulator(void *arg)
             updateStatePID(regulator->pid, u_1);
 
             pthread_mutex_unlock(&(regulator->mutex_pid));
+	    sendDataToOpCom(yRef, y_position, u_2, &start_time_abs, dataMonitor);
             break;
 
         default:
@@ -160,8 +163,6 @@ void *run_regulator(void *arg)
         previous = current;
 
         current = getMode(regulator->modeMon);
-
-        sendDataToOpCom(yRef, y_position, u_2, &start_time_abs, dataMonitor);
 
         clock_gettime(CLOCK_MONOTONIC_RAW, &end_time);
 
