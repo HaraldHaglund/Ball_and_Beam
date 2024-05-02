@@ -140,6 +140,38 @@ def setRef(newRef):
     setRef_c.restype = ctypes.c_int
     return setRef_c(newRef)
 
+def setUff(newUff):
+    """
+    Sets reference value for regulation
+
+    Args:
+        newUff (double): New Uff value
+
+    Returns:
+        int: 0 if sucessfull, non-0 of not 
+    """
+    setUff_c = comms_lib.setUffPy
+    setUff_c.argtypes = [ctypes.c_double]
+
+    setUff_c.restype = ctypes.c_int
+    return setUff_c(newUff)
+
+def setUff(newPhiff):
+    """
+    Sets reference value for regulation
+
+    Args:
+        newUff (double): New Phiff value
+
+    Returns:
+        int: 0 if sucessfull, non-0 of not 
+    """
+    setPhiff_c = comms_lib.setPhiffPy
+    setPhiff_c.argtypes = [ctypes.c_double]
+
+    setPhiff_c.restype = ctypes.c_int
+    return setPhiff_c(newPhiff)
+
 def shutDown():
     """
     sends signal to regulator to shut down
