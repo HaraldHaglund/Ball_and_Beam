@@ -25,13 +25,16 @@ typedef struct ReferenceGenerator_t
 
 void initialize_referenceGenerator(ReferenceGenerator_t *refgen);
 void setRef(ReferenceGenerator_t *refgen, double newRef);
+void setUff(ReferenceGenerator_t *refgen, double newUff);
+void setPhiff(ReferenceGenerator_t *refgen, double newPhiff);
+double getRef(ReferenceGenerator_t *refgen);
+double getUff(ReferenceGenerator_t *refgen);
+double getPhiff(ReferenceGenerator_t *refgen);
+
 void setParChanged(ReferenceGenerator_t *refgen);
 bool getParChanged(ReferenceGenerator_t *refgen);
 void setSqMode(ReferenceGenerator_t *refgen);
 void setManMode(ReferenceGenerator_t *refgen);
 void setOptMode(ReferenceGenerator_t *refgen);
-double getRef(ReferenceGenerator_t *refgen);
-double getUff(ReferenceGenerator_t *refgen);
-double getPhiff(ReferenceGenerator_t *refgen);
 
 #endif

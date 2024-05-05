@@ -241,6 +241,70 @@ int setRefPy(double ref)
 }
 
 /**
+ * @brief Sets Uff value. Should only be called by python script
+ * @param uff: double value of new uff
+ * @return 0 if no error was encountered, otherwise non-0
+ */
+int setUffPy(double uff)
+{
+    key_t key = ftok("/tmp", 'R');
+    if(key == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
+
+    int shmid = shmget(key, SHM_REF_SIZE, PERMS);
+    if(shmid == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
+
+    struct ReferenceGenerator_t* rgm = shmat(shmid, NULL, 0);
+    setUff(rgm, uff);
+
+    if(shmdt(rgm) == -1)
+    {
+        perror("Error, shmdt: ");
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * @brief Sets Phiff value. Should only be called by python script
+ * @param phiff: double value of new reference
+ * @return 0 if no error was encountered, otherwise non-0
+ */
+int setRefPy(double phiff)
+{
+    key_t key = ftok("/tmp", 'R');
+    if(key == -1)
+    {
+        perror("Error, ftok:");
+        return 1;
+    }
+
+    int shmid = shmget(key, SHM_REF_SIZE, PERMS);
+    if(shmid == -1)
+    {
+        perror("Error, shmget: ");
+        return 1;
+    }
+
+    struct ReferenceGenerator_t* rgm = shmat(shmid, NULL, 0);
+    setPhiff(rgm, phiff);
+
+    if(shmdt(rgm) == -1)
+    {
+        perror("Error, shmdt: ");
+        return 1;
+    }
+    return 0;
+}
+
+/**
  * @brief Gets latest control data. Should only be called by python script
  * @param x: pointer to double to get value of x
  * @param u: pointer to double to get value of u
