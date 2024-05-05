@@ -3,7 +3,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 import numpy as np
-import comms as c
+import comms_dum as c
 
 # Global variables
 dataOut = np.array([])  # TODO: Clean these three arrays!
@@ -266,8 +266,8 @@ axRef.set_title('Reference and Output signal')
 # axRef.set_ylabel('Position')
 axRef.set_xlim(0, tracking_time)
 axRef.set_ylim(-10, 10)
-linesOut, = axRef.plot([], [], color='red')
-linesRef, = axRef.plot([], [], color='black')
+linesOut, = axRef.plot([], [], color='red', linewidth=3)
+linesRef, = axRef.plot([], [], color='black', linewidth=3)
 
 axCon.set_title('Control signal')
 # axCon.set_xlabel('Time')
