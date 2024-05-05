@@ -53,6 +53,14 @@ def setRef(newRef):
     # print('Reference set to ', newRef)
     return 0
 
+def setUff(newUff):
+    print('Uff set to', newUff)
+    return 0
+
+def setPhiff(newPhiff):
+    print('Phiff set to')
+    return 0
+
 
 def shutDown():
     print('Shutting down')

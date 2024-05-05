@@ -22,12 +22,16 @@ max_ctrl = 0.2
 is_manual = True  # Default selection
 is_square = False
 is_time_optimal = False
+new_period = True
 OFF = 0
 BEAM = 1
 BALL = 2
 i = 0
 referenceSignal = 0
 oldreferenceSignal = 0
+K_PHI = 4.5
+K_V = 10.0
+ts = 0
 
 # PID Inner Values
 inner_K, inner_Ti, inner_Tr, inner_beta, inner_H, inner_integratorOn = c.getInnerParameters()
@@ -266,15 +270,15 @@ axRef.set_title('Reference and Output signal')
 # axRef.set_ylabel('Position')
 axRef.set_xlim(0, tracking_time)
 axRef.set_ylim(-10, 10)
-linesOut, = axRef.plot([], [], color='red', linewidth=3)
-linesRef, = axRef.plot([], [], color='black', linewidth=3)
+linesOut, = axRef.plot([], [], color='red', linewidth=2)
+linesRef, = axRef.plot([], [], color='black', linewidth=2)
 
 axCon.set_title('Control signal')
 # axCon.set_xlabel('Time')
 # axCon.set_ylabel('Position')
 axCon.set_xlim(0, tracking_time)
 axCon.set_ylim(-10, 10)
-linesCon, = axCon.plot([], [], color='blue')
+linesCon, = axCon.plot([], [], color='blue', linewidth=2)
 
 # Create canvas
 canvas = FigureCanvasTkAgg(fig, master=plotFrame)
@@ -282,7 +286,7 @@ canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 
 def update(frame):
-    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal, oldreferenceSignal
+    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal, oldreferenceSignal, max_ctrl, new_period, ts
     xRef.append(index)  # This counts the iterations for the x-axis
 
     # Append data to dataOut
@@ -304,27 +308,52 @@ def update(frame):
         oldreferenceSignal = referenceSignal
         referenceSignal = manualAmp
     elif is_time_optimal:
+        # Make the amp shift just like in squareAmp
+        if iteration > squarePeriodTime * fps:
+            squareAmp *= -1
+            iteration = 0
+            new_period = True
         # Calculate time optimal control parameters
-        # ts = 0  # Assuming starting time is 0 (wrong)
-        # z0 = 0  # Initial reference value
-        # new_setpoint = 10  # Example new setpoint value
-        # distance = new_setpoint - z0  # Calculate distance to new setpoint
-        # K_PHI = 1  # Example constant
-        # K_V = 1  # Example constant
+        if new_period:
+            ts = index  # start time (index = current time)
+            new_period = False
+        zf = squareAmp  # final setpoint. Our final "goal"
+        distance = zf - referenceSignal  # difference between the final setpoint (zf) and the current reference position (z0)
+        u0 = np.sign(distance) * max_ctrl  # initial control signal used in the time-optimal control calculation.
+        T = np.cbrt(np.abs(distance) / (2.0 * K_PHI * K_V * max_ctrl))  # How long it will take for the system to move from the current position z0 to the final setpoint zf
 
-        # u0 = np.sign(distance) * max_ctrl
-        # T = np.cbrt(np.abs(distance) / (2.0 * K_PHI * K_V * max_ctrl))
-        # tf = ts + 4.0 * T  # Calculate final time
-        # setpoint = new_setpoint  # Update setpoint
+        # Calculate reference signal based on the time-optimal control
+        t = (index - ts)   # Current time - Start time
+        if t <= T:
+            uff = u0
+            phiff = -K_PHI * u0 * t
+            ref = referenceSignal + K_PHI * K_V * u0 * t ** 3 / 6
+        elif t <= 3.0 * T:
+            uff = -u0
+            phiff = K_PHI * u0 * (t - 2 * T)
+            ref = referenceSignal - K_PHI * K_V * u0 * (t ** 3 / 6 - T * t ** 2 + T ** 2 * t - T ** 3 / 3)
+        elif t <= 4.0 * T:
+            uff = u0
+            phiff = -K_PHI * u0 * (t - 4 * T)
+            ref = referenceSignal + K_PHI * K_V * u0 * (t ** 3 / 6 - 2 * T * t ** 2 + 8 * T ** 2 * t - 26 * T ** 3 / 3)
+        else:
+            uff = 0
+            phiff = 0
+            ref = zf
 
-        # Assuming a constant control input for the duration
-        # control_input = np.full(int(tf * fps), u0)
-        # dataRef = np.append(dataRef, control_input)
-        pass
+        # Here we can check if the value has been updated before calling this function
+        c.setUff(uff)
+        c.setPhiff(phiff)
+
+        # Append the reference signal to dataRef
+        dataRef = np.append(dataRef, ref)
+
+        # Update reference signal if changed
+        oldreferenceSignal = referenceSignal
+        referenceSignal = ref
 
     # Update x-axis limits dynamically
     axRef.set_xlim(max(0.0, index - tracking_time), max(tracking_time, index))
-
     axCon.set_xlim(max(0.0, index - tracking_time), max(tracking_time, index))
 
     linesOut.set_data(xRef, dataOut)

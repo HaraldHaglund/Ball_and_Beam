@@ -156,7 +156,7 @@ def setUff(newUff):
     setUff_c.restype = ctypes.c_int
     return setUff_c(newUff)
 
-def setUff(newPhiff):
+def setPhiff(newPhiff):
     """
     Sets reference value for regulation
 
