@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <stdbool.h>
@@ -21,6 +22,7 @@ void initialize_PID(PID_t *pid)
     pthread_mutex_init(&(pid->mutex), NULL); // free this memory!
     pid->ad = pid->Td / (pid->Td + pid->N * pid->H);
     pid->bd = pid->K * pid->ad * pid->N;
+    printf("initialize PID\n");
 }
 
 void destroy_PID(PID_t *pi)

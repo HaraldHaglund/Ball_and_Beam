@@ -108,8 +108,6 @@ void *run_regulator(void *arg)
             y_position = 0;
             u_2 = 0;
 
-            writeOutput(analogOut_1, u_2, 1, moberg);
-
             break;
 
         case BEAM:
