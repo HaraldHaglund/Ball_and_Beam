@@ -74,7 +74,7 @@ int getInnerParameters(double *K, double *Ti, double *Tr, double *Beta, double *
         perror("Error, ftok:");
         return 1;
     }
-
+    
     int shmid = shmget(key, SHM_PI_SIZE, PERMS);
     if(shmid == -1)
     {
@@ -114,7 +114,9 @@ int setOuterParameters(double K, double Ti, double Td, double Tr, double N, doub
         perror("Error, ftok:");
         return 1;
     }
-
+    
+    printf("%ld", SHM_PID_SIZE);
+    
     int shmid = shmget(key, SHM_PID_SIZE, PERMS);
     if(shmid == -1)
     {
@@ -148,14 +150,16 @@ int setOuterParameters(double K, double Ti, double Td, double Tr, double N, doub
  */
 int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N, double *Beta, double *H, int *integratorOn)
 {
+  printf("1\n");
     key_t key = ftok("/tmp", 'D');
     if(key == -1)
     {
         perror("Error, ftok:");
         return 1;
     }
-
-    int shmid = shmget(key, SHM_PID_SIZE, PERMS);
+    printf("2\n");
+    printf("key receiver: %d\n", key);
+    int shmid = shmget(key, sizeof(struct PID_t), PERMS);
     if(shmid == -1)
     {
         perror("Error, shmget: ");

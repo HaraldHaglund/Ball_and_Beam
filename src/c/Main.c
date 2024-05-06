@@ -7,6 +7,7 @@
 #include "../../include/ReferenceGenerator.h"
 #include "../../include/regulator.h"
 #include "../../include/comms.h"
+#include <errno.h>
 
 #define SHM_PI_SIZE sizeof(struct PI_t)
 #define SHM_PID_SIZE sizeof(struct PID_t)
@@ -56,12 +57,22 @@ int main()
         perror("Error, ftok:");
         return 1;
     }
+    
+    printf("1\n");
+    printf("key main: %d\n", key_PID);
+    printf("SHM_PID_SIZE: %d\n", SHM_PID_SIZE);
+    printf("IPC_CREAT: %d\n", IPC_CREAT);
+    printf("PERMS: %d\n", PERMS);
+    
     int shmid_PID = shmget(key_PID, SHM_PID_SIZE, IPC_CREAT | PERMS);
+    
     if (shmid_PID == -1)
     {
         perror("Error, shmget: ");
+	fprintf(stderr, "error code: %d\n", errno);
         return 1;
     }
+    printf("3\n");
     struct PID_t *PID = shmat(shmid_PID, NULL, 0);
 
     // Refgen monitor
@@ -109,6 +120,7 @@ int main()
     }
     struct Regulator_t *regulator = shmat(shmid_reg, NULL, 0);
 
+    printf("2\n");
     // initialization of all structs
     initialize_ModeMonitor(mode_monitor);
     initialize_PI(PI);

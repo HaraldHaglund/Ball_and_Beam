@@ -296,7 +296,7 @@ def update(frame):
     dataCon = np.append(dataCon, controlData)
     # Append data to dataRef
     if is_square:
-        if iteration > squarePeriodTime * fps:
+        if iteration > (squarePeriodTime/2) * fps:
             squareAmp *= -1
             iteration = 0
         dataRef = np.append(dataRef, squareAmp)
@@ -309,7 +309,7 @@ def update(frame):
         referenceSignal = manualAmp
     elif is_time_optimal:
         # Make the amp shift just like in squareAmp
-        if iteration > squarePeriodTime * fps:
+        if iteration > (squarePeriodTime/2) * fps:
             squareAmp *= -1
             iteration = 0
             new_period = True
@@ -317,6 +317,7 @@ def update(frame):
         if new_period:
             ts = index  # start time (index = current time)
             new_period = False
+        #print(index)
         zf = squareAmp  # final setpoint. Our final "goal"
         distance = zf - referenceSignal  # difference between the final setpoint (zf) and the current reference position (z0)
         u0 = np.sign(distance) * max_ctrl  # initial control signal used in the time-optimal control calculation.
@@ -327,15 +328,15 @@ def update(frame):
         if t <= T:
             uff = u0
             phiff = -K_PHI * u0 * t
-            ref = referenceSignal + K_PHI * K_V * u0 * t ** 3 / 6
+            ref = referenceSignal + K_PHI * K_V * u0 * (t ** 3) / 6
         elif t <= 3.0 * T:
             uff = -u0
             phiff = K_PHI * u0 * (t - 2 * T)
-            ref = referenceSignal - K_PHI * K_V * u0 * (t ** 3 / 6 - T * t ** 2 + T ** 2 * t - T ** 3 / 3)
+            ref = referenceSignal - K_PHI * K_V * u0 * ((t ** 3) / 6 - T * (t ** 2) + (T ** 2) * t - (T ** 3) / 3)
         elif t <= 4.0 * T:
             uff = u0
             phiff = -K_PHI * u0 * (t - 4 * T)
-            ref = referenceSignal + K_PHI * K_V * u0 * (t ** 3 / 6 - 2 * T * t ** 2 + 8 * T ** 2 * t - 26 * T ** 3 / 3)
+            ref = referenceSignal + K_PHI * K_V * u0 * ((t ** 3) / 6 - 2 * T * (t ** 2) + 8 * (T ** 2) * t - 26 * (T ** 3) / 3)
         else:
             uff = 0
             phiff = 0
