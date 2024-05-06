@@ -5,9 +5,9 @@
 
 void initialize_PID(PID_t *pid)
 {
-    pid->K = -0.13;
-    pid->Ti = 5.0;
-    pid->Tr = 10.0;
+    pid->K = -0.10;
+    pid->Ti = 12.5;
+    pid->Tr = 5.0;
     pid->Td = 1.6;
     pid->Beta = 1.0;
     pid->H = 0.1;
@@ -44,7 +44,7 @@ void updateStatePID(PID_t *pid, double u)
 {
     pthread_mutex_lock(&(pid->mutex));
     if (pid->integratorOn) {
-            pid->I = pid->I + pid->K * pid->H / pid->Ti * pid->e + pid->H / pid->Tr * (u - pid->v);
+      pid->I = pid->I + ((pid->K * pid->H / pid->Ti) * pid->e) + (pid->H / pid->Tr) * (u - pid->v);
         } else {
             pid->I = 0.0;
         }
