@@ -44,7 +44,7 @@ void updateStatePID(PID_t *pid, double u)
 {
     pthread_mutex_lock(&(pid->mutex));
     if (pid->integratorOn) {
-            pid->I = pid->I + pid->K * pid->H / pid->Ti * pid->e + pid->H / pid->Tr * (u - pid->v);
+      pid->I = pid->I + ((pid->K * pid->H / pid->Ti) * pid->e) + (pid->H / pid->Tr) * (u - pid->v);
         } else {
             pid->I = 0.0;
         }

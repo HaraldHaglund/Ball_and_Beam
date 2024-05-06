@@ -277,7 +277,7 @@ int setUffPy(double uff)
  * @param phiff: double value of new reference
  * @return 0 if no error was encountered, otherwise non-0
  */
-int setRefPy(double phiff)
+int setPhiffPy(double phiff)
 {
     key_t key = ftok("/tmp", 'R');
     if(key == -1)
