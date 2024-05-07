@@ -3,7 +3,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 import numpy as np
-import comms as c
+import comms_dum as c
 
 # Global variables
 dataOut = np.array([])  # TODO: Clean these three arrays!
@@ -296,6 +296,14 @@ canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 def update(frame):
     global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal, oldreferenceSignal, max_ctrl, new_period, ts, z0, uff, phiff
+
+    # Clean the arrays where necessary
+    if len(dataOut) >= 100 and len(dataRef) >= 100 and len(dataCon) >= 100:
+        dataOut = dataOut[-100:]
+        dataRef = dataRef[-100:]
+        dataCon = dataCon[-100:]
+        xRef = xRef[-100:]
+
     xRef.append(index)  # This counts the iterations for the x-axis
 
     # Append data to dataOut
@@ -305,7 +313,7 @@ def update(frame):
     dataCon = np.append(dataCon, controlData)
     # Append data to dataRef
     if is_square:
-        if iteration > (squarePeriodTime/2) * fps:
+        if iteration > (squarePeriodTime / 2) * fps:
             squareAmp *= -1
             iteration = 0
         dataRef = np.append(dataRef, squareAmp)
@@ -322,19 +330,20 @@ def update(frame):
         phiff = 0
     elif is_time_optimal:
         # Make the amp shift just like in squareAmp
-        if iteration > (squarePeriodTime/2) * fps:
+        if iteration > (squarePeriodTime / 2) * fps:
             squareAmp *= -1
             iteration = 0
             new_period = True
         # Calculate time optimal control parameters
         if new_period:
             ts = index  # start time (index = current time)
-            z0 = squareAmp*-1  # Inverse of current goal (to get startpoint)
+            z0 = squareAmp * -1  # Inverse of current goal (to get startpoint)
             new_period = False
         zf = squareAmp  # final setpoint. Our final "goal"
         distance = zf - z0  # difference between the final setpoint (zf) and the initial reference position (z0)
         u0 = np.sign(distance) * max_ctrl  # initial control signal used in the time-optimal control calculation.
-        T = np.cbrt(np.abs(distance) / (2.0 * K_PHI * K_V * max_ctrl))  # How long it will take for the system to move from the current position z0 to the final setpoint zf
+        T = np.cbrt(np.abs(distance) / (
+                    2.0 * K_PHI * K_V * max_ctrl))  # How long it will take for the system to move from the current position z0 to the final setpoint zf
 
         # Calculate reference signal based on the time-optimal control
         t = (index - ts)  # Current time - Start time
@@ -355,16 +364,15 @@ def update(frame):
             phiff = 0
             ref = zf
 
-        # Here we can check if the value has been updated before calling this function
-        c.setUff(uff)
-        c.setPhiff(phiff)
-
         # Append the reference signal to dataRef
         dataRef = np.append(dataRef, ref)
 
         # Update reference signal if changed
         oldreferenceSignal = referenceSignal
         referenceSignal = ref
+
+    c.setUff(uff)
+    c.setPhiff(phiff)
 
     # Update x-axis limits dynamically
     axRef.set_xlim(max(0.0, index - tracking_time), max(tracking_time, index))
