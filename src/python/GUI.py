@@ -3,7 +3,7 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 import numpy as np
-import comms as c
+import comms_dum as c
 
 # Global variables
 dataOut = np.array([])  # TODO: Clean these three arrays!
@@ -32,6 +32,7 @@ oldreferenceSignal = 0
 K_PHI = 4.5
 K_V = 10.0
 ts = 0
+z0 = 0
 
 # PID Inner Values
 inner_K, inner_Ti, inner_Tr, inner_beta, inner_H, inner_integratorOn = c.getInnerParameters()
@@ -292,7 +293,7 @@ canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 
 def update(frame):
-    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal, oldreferenceSignal, max_ctrl, new_period, ts
+    global dataOut, dataCon, dataRef, xRef, index, tracking_time, fps, iteration, squareAmp, is_manual, is_square, is_time_optimal, i, referenceSignal, oldreferenceSignal, max_ctrl, new_period, ts, z0
     xRef.append(index)  # This counts the iterations for the x-axis
 
     # Append data to dataOut
@@ -322,10 +323,10 @@ def update(frame):
         # Calculate time optimal control parameters
         if new_period:
             ts = index  # start time (index = current time)
+            z0 = squareAmp*-1  # Inverse of current goal (to get startpoint)
             new_period = False
-        #print(index)
         zf = squareAmp  # final setpoint. Our final "goal"
-        distance = zf - referenceSignal  # difference between the final setpoint (zf) and the current reference position (z0)
+        distance = zf - z0  # difference between the final setpoint (zf) and the initial reference position (z0)
         u0 = np.sign(distance) * max_ctrl  # initial control signal used in the time-optimal control calculation.
         T = np.cbrt(np.abs(distance) / (
                     2.0 * K_PHI * K_V * max_ctrl))  # How long it will take for the system to move from the current position z0 to the final setpoint zf
@@ -335,15 +336,15 @@ def update(frame):
         if t <= T:
             uff = u0
             phiff = -K_PHI * u0 * t
-            ref = referenceSignal + K_PHI * K_V * u0 * (t ** 3) / 6
+            ref = z0 + K_PHI * K_V * u0 * (t ** 3) / 6
         elif t <= 3.0 * T:
             uff = -u0
             phiff = K_PHI * u0 * (t - 2 * T)
-            ref = referenceSignal - K_PHI * K_V * u0 * ((t ** 3) / 6 - T * (t ** 2) + (T ** 2) * t - (T ** 3) / 3)
+            ref = z0 - K_PHI * K_V * u0 * ((t ** 3) / 6 - T * (t ** 2) + (T ** 2) * t - (T ** 3) / 3)
         elif t <= 4.0 * T:
             uff = u0
             phiff = -K_PHI * u0 * (t - 4 * T)
-            ref = referenceSignal + K_PHI * K_V * u0 * ((t ** 3) / 6 - 2 * T * (t ** 2) + 8 * (T ** 2) * t - 26 * (T ** 3) / 3)
+            ref = z0 + K_PHI * K_V * u0 * ((t ** 3) / 6 - 2 * T * (t ** 2) + 8 * (T ** 2) * t - 26 * (T ** 3) / 3)
         else:
             uff = 0
             phiff = 0
