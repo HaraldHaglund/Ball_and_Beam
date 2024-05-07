@@ -47,7 +47,6 @@ void *run_regulator(void *arg)
   int prio = 1;
 
   pthread_setschedprio(pthread_self(), prio);
-    printf("past prio set\n");
     regulator_arguments *args = (regulator_arguments *)arg;
     Regulator_t *regulator = args->regulator;
     Data_t *dataMonitor = args->data_monitor;

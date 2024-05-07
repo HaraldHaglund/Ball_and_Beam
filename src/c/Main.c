@@ -7,7 +7,6 @@
 #include "../../include/ReferenceGenerator.h"
 #include "../../include/regulator.h"
 #include "../../include/comms.h"
-#include <errno.h>
 
 #define SHM_PI_SIZE sizeof(struct PI_t)
 #define SHM_PID_SIZE sizeof(struct PID_t)
@@ -16,17 +15,18 @@
 #define SHM_DATA_SIZE sizeof(struct Data_t)
 #define SHM_REG_SIZE sizeof(struct Regulator_t)
 #define PERMS 0666
-/*
-void* run_GUI(void*arg)
+
+void* run_GUI()
 {
   int prio = 2;
   pthread_setschedprio(pthread_self(), prio);
-  if(startOpCom != 0)
+  if(startOpcom() != 0)
    {
-     return 1;
+     perror("could not start Opcom \n");
    }
+  return NULL;
 }
-*/
+
 int main()
 {
     // mode monitor
@@ -73,7 +73,6 @@ int main()
     if (shmid_PID == -1)
     {
         perror("Error, shmget: ");
-	fprintf(stderr, "error code: %d\n", errno);
         return 1;
     }
     
@@ -145,28 +144,27 @@ int main()
 
     if (pthread_create(&regulator_thread, NULL, run_regulator, (void*)&args) != 0)
     {
-        perror("Error starting regulator thread");
+        perror("Error starting regulator thread \n");
         return 1;
     }
 
     // start GUI Need to start a separate thread that runs this otrherwise main gets stuck here.
-    if (startOpcom() != 0)
-    {
-      return -1;
-    }
-    /*
+    //if (startOpcom() != 0)
+    //{
+    // return -1;
+    //}
+    
     pthread_t GUI_thread;
     if(pthread_create(&GUI_thread, NULL, run_GUI, NULL) != 0)
     {
-     perror("Error starting GUI thread");
+     perror("Error starting GUI thread \n");
      return 1;
     }
-    */
 
     // done
     if (pthread_join(regulator_thread, NULL) != 0)
     {
-        perror("Error joining regulator thread");
+        perror("Error joining regulator thread \n");
         return 1;
     }
 
