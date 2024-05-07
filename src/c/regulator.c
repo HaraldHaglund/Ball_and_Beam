@@ -147,6 +147,7 @@ void *run_regulator(void *arg)
             updateStatePID(regulator->pid, u_1 - getPhiff(regulator->refGen));
 
             pthread_mutex_unlock(&(regulator->mutex_pid));
+	    sendDataToOpCom(yRef, y_position, u_2, &start_time_abs, dataMonitor);
             break;
 
         default:

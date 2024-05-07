@@ -6,12 +6,12 @@
 
 void initialize_PID(PID_t *pid)
 {
-    pid->K = -0.10;
-    pid->Ti = 12.5;
+    pid->K = -0.12;
+    pid->Ti = 30.5;
     pid->Tr = 5.0;
-    pid->Td = 1.6;
+    pid->Td = 1.3;
     pid->Beta = 1.0;
-    pid->H = 0.1;
+    pid->H = 0.05;
     pid->N = 10.0;
     pid->integratorOn = false;
     pid->I = 0.0;
