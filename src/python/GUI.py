@@ -68,8 +68,14 @@ root.rowconfigure(0, weight=1)
 settings = tk.Frame(parameterFrame)
 settings.pack(side=tk.BOTTOM)
 
+
+def kill_all():
+    c.shutDown()
+    root.destroy()
+
+
 # Stop-button
-stop = tk.Button(settings, text='Stop', font=('Courier', 20), width=20, command=c.shutDown)
+stop = tk.Button(settings, text='Stop', font=('Courier', 20), width=20, command=kill_all)
 stop.pack(side=tk.BOTTOM)
 
 # Radio-buttons
@@ -321,10 +327,11 @@ def update(frame):
         zf = squareAmp  # final setpoint. Our final "goal"
         distance = zf - referenceSignal  # difference between the final setpoint (zf) and the current reference position (z0)
         u0 = np.sign(distance) * max_ctrl  # initial control signal used in the time-optimal control calculation.
-        T = np.cbrt(np.abs(distance) / (2.0 * K_PHI * K_V * max_ctrl))  # How long it will take for the system to move from the current position z0 to the final setpoint zf
+        T = np.cbrt(np.abs(distance) / (
+                    2.0 * K_PHI * K_V * max_ctrl))  # How long it will take for the system to move from the current position z0 to the final setpoint zf
 
         # Calculate reference signal based on the time-optimal control
-        t = (index - ts)   # Current time - Start time
+        t = (index - ts)  # Current time - Start time
         if t <= T:
             uff = u0
             phiff = -K_PHI * u0 * t
