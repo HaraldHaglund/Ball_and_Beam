@@ -5,11 +5,11 @@
 
 void initialize_PI(PI_t *pi)
 {
-    pi->K = 0.8;
+    pi->K = 0.85;
     pi->Ti = 0;
     pi->Tr = 10.0;
     pi->Beta = 1.0;
-    pi->H = 0.1;
+    pi->H = 0.05;
     pi->integratorOn = false;
     pi->I = 0.0;
     pi->v = 0.0;
