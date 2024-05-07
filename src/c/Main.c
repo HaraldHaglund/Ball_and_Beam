@@ -16,7 +16,17 @@
 #define SHM_DATA_SIZE sizeof(struct Data_t)
 #define SHM_REG_SIZE sizeof(struct Regulator_t)
 #define PERMS 0666
-
+/*
+void* run_GUI(void*arg)
+{
+  int prio = 2;
+  pthread_setschedprio(pthread_self(), prio);
+  if(startOpCom != 0)
+   {
+     return 1;
+   }
+}
+*/
 int main()
 {
     // mode monitor
@@ -142,8 +152,16 @@ int main()
     // start GUI Need to start a separate thread that runs this otrherwise main gets stuck here.
     if (startOpcom() != 0)
     {
-        return -1;
+      return -1;
     }
+    /*
+    pthread_t GUI_thread;
+    if(pthread_create(&GUI_thread, NULL, run_GUI, NULL) != 0)
+    {
+     perror("Error starting GUI thread");
+     return 1;
+    }
+    */
 
     // done
     if (pthread_join(regulator_thread, NULL) != 0)
