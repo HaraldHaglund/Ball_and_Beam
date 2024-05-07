@@ -1,8 +1,5 @@
 #ifndef REFGENMONIOR_H
 #define REFGENMONIOR_H
-#define MANUAL (0)
-#define SQUARE (1)
-#define OPTIMAL (2)
 #include <stdbool.h>
 
 #include <pthread.h>
@@ -17,7 +14,6 @@ typedef struct ReferenceGenerator_t
     volatile double ref;
     volatile double uff;
     volatile double phiff;
-    volatile int mode;
     bool ampChanged, periodChanged, maxCtrlChanged;
     bool parChanged;
     pthread_mutex_t mutex;

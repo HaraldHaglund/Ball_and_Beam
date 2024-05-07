@@ -7,6 +7,7 @@
 #include "../../include/ReferenceGenerator.h"
 #include "../../include/regulator.h"
 #include "../../include/comms.h"
+#include <errno.h>
 
 #define SHM_PI_SIZE sizeof(struct PI_t)
 #define SHM_PID_SIZE sizeof(struct PID_t)
@@ -56,12 +57,16 @@ int main()
         perror("Error, ftok:");
         return 1;
     }
+    
     int shmid_PID = shmget(key_PID, SHM_PID_SIZE, IPC_CREAT | PERMS);
+    
     if (shmid_PID == -1)
     {
         perror("Error, shmget: ");
+	fprintf(stderr, "error code: %d\n", errno);
         return 1;
     }
+    
     struct PID_t *PID = shmat(shmid_PID, NULL, 0);
 
     // Refgen monitor

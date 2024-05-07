@@ -5,7 +5,7 @@
 
 void initialize_PI(PI_t *pi)
 {
-    pi->K = 2.2;
+    pi->K = 0.8;
     pi->Ti = 0;
     pi->Tr = 10.0;
     pi->Beta = 1.0;

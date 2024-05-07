@@ -27,7 +27,6 @@ void sendDataToOpCom(double yRef, double y, double u, struct timespec *start, Da
     putData(datamonitor, t, yRef, y, u);
 }
 
-
 // move this functionality to receiver.c so we can call it from the GUI
 void shutDown(Regulator_t *regulator)
 {
@@ -109,8 +108,6 @@ void *run_regulator(void *arg)
             y_position = 0;
             u_2 = 0;
 
-            writeOutput(analogOut_1, u_2, 1, moberg);
-
             break;
 
         case BEAM:
@@ -125,7 +122,7 @@ void *run_regulator(void *arg)
             updateStatePI(regulator->pi, u_2);
 
             pthread_mutex_unlock(&(regulator->mutex_pi));
-	    sendDataToOpCom(yRef, y_angle, u_2, &start_time_abs, dataMonitor);
+            sendDataToOpCom(yRef, y_angle, u_2, &start_time_abs, dataMonitor);
 
             break;
 
@@ -136,27 +133,20 @@ void *run_regulator(void *arg)
 
             pthread_mutex_lock(&(regulator->mutex_pid));
 
-            u_1 = calculateOutputPID(regulator->pid, y_position, yRef);
+            u_1 = calculateOutputPID(regulator->pid, y_position, yRef) + getPhiff(regulator->refGen);
 
             pthread_mutex_lock(&(regulator->mutex_pi));
 
             readInput(analogInAngle_1, &y_angle, 1, moberg);
-            u_2 = limit(calculateOutputPI(regulator->pi, y_angle, u_1));
+            u_2 = limit(calculateOutputPI(regulator->pi, y_angle, u_1) + getUff(regulator->refGen));
             writeOutput(analogOut_1, u_2, 1, moberg);
-            updateStatePI(regulator->pi, u_2);
+            updateStatePI(regulator->pi, u_2 - getUff(regulator->refGen));
 
             pthread_mutex_unlock(&(regulator->mutex_pi));
 
-            updateStatePID(regulator->pid, u_1);
+            updateStatePID(regulator->pid, u_1 - getPhiff(regulator->refGen));
 
             pthread_mutex_unlock(&(regulator->mutex_pid));
-	    sendDataToOpCom(yRef, y_position, u_2, &start_time_abs, dataMonitor);
-	    printf("ypos: %f\n", y_position);
-	    printf("yang: %f\n", y_angle);
-	    printf("yref: %f\n", yRef);
-	    printf("PID_out: %f\n", u_1);
-	    printf("PI_out: %f\n", u_2);
-	    
             break;
 
         default:
@@ -198,7 +188,7 @@ free:
 
 void writeOutput(struct moberg_analog_out out, double u, int port, struct moberg *moberg)
 {
-    printf("writeOutput: %f\n", u);
+  // printf("writeOutput: %f\n", u);
     if (!moberg_OK(out.write(out.context, u, &u)))
     {
         fprintf(stderr, "WRITE failed\n");

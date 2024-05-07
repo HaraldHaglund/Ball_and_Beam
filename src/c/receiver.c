@@ -74,7 +74,7 @@ int getInnerParameters(double *K, double *Ti, double *Tr, double *Beta, double *
         perror("Error, ftok:");
         return 1;
     }
-
+    
     int shmid = shmget(key, SHM_PI_SIZE, PERMS);
     if(shmid == -1)
     {
@@ -114,7 +114,7 @@ int setOuterParameters(double K, double Ti, double Td, double Tr, double N, doub
         perror("Error, ftok:");
         return 1;
     }
-
+    
     int shmid = shmget(key, SHM_PID_SIZE, PERMS);
     if(shmid == -1)
     {
@@ -154,8 +154,7 @@ int getOuterParameters(double *K, double *Ti, double *Td, double *Tr, double *N,
         perror("Error, ftok:");
         return 1;
     }
-
-    int shmid = shmget(key, SHM_PID_SIZE, PERMS);
+    int shmid = shmget(key, sizeof(struct PID_t), PERMS);
     if(shmid == -1)
     {
         perror("Error, shmget: ");
@@ -277,7 +276,7 @@ int setUffPy(double uff)
  * @param phiff: double value of new reference
  * @return 0 if no error was encountered, otherwise non-0
  */
-int setRefPy(double phiff)
+int setPhiffPy(double phiff)
 {
     key_t key = ftok("/tmp", 'R');
     if(key == -1)
