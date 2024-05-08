@@ -124,11 +124,11 @@ int main()
     struct Regulator_t *regulator = shmat(shmid_reg, NULL, 0);
 
     // initialization of all structs
-    initialize_ModeMonitor(mode_monitor);
-    initialize_PI(PI);
-    initialize_PID(PID);
-    initialize_referenceGenerator(refGen);
-    initialize_DataMonitor(data_monitor);
+    initialize_ModeMonitor(mode_monitor,shmid_mode);
+    initialize_PI(PI, shmid_PI);
+    initialize_PID(PID, shmid_PID);
+    initialize_ReferenceGenerator(refGen, shmid_refGen);
+    initialize_DataMonitor(data_monitor, shmid_data);
     initialize_regulator(regulator, PI, PID, mode_monitor, refGen);
 
     // start threads

@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <stdbool.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include "../../include/PID.h"
 
-void initialize_PID(PID_t *pid)
+void initialize_PID(PID_t *pid, int shmid)
 {
     pid->K = -0.12;
     pid->Ti = 30.5;
@@ -23,11 +25,24 @@ void initialize_PID(PID_t *pid)
     pthread_mutex_init(&(pid->mutex), NULL); // free this memory!
     pid->ad = pid->Td / (pid->Td + pid->N * pid->H);
     pid->bd = pid->K * pid->ad * pid->N;
+    pid->shmid = shmid;
 }
 
-void destroy_PID(PID_t *pi)
+void destroy_PID(PID_t *pid)
 {
-    pthread_mutex_destroy(&(pi->mutex));
+    pthread_mutex_destroy(&(pid->mutex));
+    int shmid = pid->shmid;
+    
+    if(shmdt(pid) == -1){
+      perror("shmdt PID");
+    }
+
+    if(shmctl(shmid, IPC_RMID, NULL) == -1) {
+      perror("shctl PID");
+    }
+
+    printf("PID destroyed\n");
+    
 }
 
 double calculateOutputPID(PID_t *pid, double y, double yref)

@@ -18,9 +18,10 @@ typedef struct PI_t
     volatile double v;
     volatile double e;
     pthread_mutex_t mutex;
+  int shmid;
 } PI_t;
 
-void initialize_PI(PI_t *pi);
+void initialize_PI(PI_t *pi, int shmid);
 void destroy_PI(PI_t *pi);
 double calculateOutputPI(PI_t *pi, double y, double yref);
 void updateStatePI(PI_t *pi, double u);

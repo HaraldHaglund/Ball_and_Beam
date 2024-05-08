@@ -1,7 +1,9 @@
 #include "../../include/ReferenceGenerator.h"
 #include <stdio.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
-void initialize_referenceGenerator(ReferenceGenerator_t *refgen)
+void initialize_ReferenceGenerator(ReferenceGenerator_t *refgen, int shmid)
 {
     refgen->amplitude = 5.0;
     refgen->period = 15.0;
@@ -11,6 +13,24 @@ void initialize_referenceGenerator(ReferenceGenerator_t *refgen)
     refgen->uff = 0.0;
     refgen->phiff = 0.0;
     refgen->parChanged = false;
+    pthread_mutex_init(&(refgen->mutex), NULL);
+    refgen->shmid = shmid;
+}
+
+void destroy_ReferenceGenerator(ReferenceGenerator_t *refgen)
+{
+    pthread_mutex_destroy(&(refgen->mutex));
+    int shmid = refgen->shmid;
+
+    if(shmdt(refgen) == -1) {
+      perror("shmdt refGen");
+    }
+
+    if(shmctl(shmid, IPC_RMID, NULL) == -1) {
+      perror("shmcl refGen");
+    }
+
+    printf("Reference Generator destroyed\n");
 }
 
 void setRef(ReferenceGenerator_t *refgen, double newRef)

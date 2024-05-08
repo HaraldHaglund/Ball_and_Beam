@@ -181,12 +181,18 @@ void *run_regulator(void *arg)
     }
 
     writeOutput(analogOut_1, 0.0, 1, moberg);
-    pthread_mutex_destroy(&(regulator->mutex_pi));
-    pthread_mutex_destroy(&(regulator->mutex_pid));
+    //pthread_mutex_destroy(&(regulator->mutex_pi));
+    //pthread_mutex_destroy(&(regulator->mutex_pid));
 
 free:
-    printf("freed in regulator\n");
+    printf("Freeing in regulator\n");
+    writeOutput(analogOut_1, 0.0, 1, moberg);
     moberg_free(moberg);
+    destroy_PID(regulator->pid);
+    destroy_PI(regulator->pi);
+    destroy_ModeMonitor(regulator->modeMon);
+    destroy_ReferenceGenerator(regulator->refGen);
+    destroy_DataMonitor(dataMonitor);
     return 0;
 }
 

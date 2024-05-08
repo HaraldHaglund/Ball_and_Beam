@@ -13,11 +13,13 @@ typedef struct ModeMonitor_t
     // OFF = 0, BEAM = 1, BALL = 2
     volatile int mode;
     pthread_mutex_t mutex;
+  int shmid;
 
 } ModeMonitor_t;
 
 
-void initialize_ModeMonitor(ModeMonitor_t *modeMon);
+void initialize_ModeMonitor(ModeMonitor_t *modeMon, int shmid);
+void destroy_ModeMonitor(ModeMonitor_t *modeMon);
 int setMode(ModeMonitor_t *modeMon, int mode);
 int getMode(ModeMonitor_t *modeMon);
 #endif

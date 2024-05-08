@@ -25,10 +25,11 @@ typedef struct PID_t
     volatile double bd;
     volatile double y_old;
     pthread_mutex_t mutex;
+    int shmid;
 } PID_t;
 
-void initialize_PID(PID_t *pid);
-void destroy_PID(PID_t *pi);
+void initialize_PID(PID_t *pid, int shmid);
+void destroy_PID(PID_t *pid);
 double calculateOutputPID(PID_t *pid, double y, double yref);
 void updateStatePID(PID_t *pid, double u);
 double getHPID(PID_t *pid);

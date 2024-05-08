@@ -1,9 +1,12 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <pthread.h>
 #include <stdbool.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include "../../include/PI.h"
 
-void initialize_PI(PI_t *pi)
+void initialize_PI(PI_t *pi, int shmid)
 {
     pi->K = 0.85;
     pi->Ti = 0;
@@ -15,11 +18,23 @@ void initialize_PI(PI_t *pi)
     pi->v = 0.0;
     pi->e = 0.0;
     pthread_mutex_init(&(pi->mutex), NULL); // free this memory!
+    pi->shmid = shmid;
 }
 
 void destroy_PI(PI_t *pi)
 {
     pthread_mutex_destroy(&(pi->mutex));
+    int shmid = pi->shmid;
+
+    if(shmdt(pi) == -1) {
+      perror("shmdt PI");
+    }
+
+    if(shmctl(shmid, IPC_RMID, NULL) == -1) {
+      perror("shmcl PI");
+    }
+
+    printf("PI destroyed\n");
 }
 
 double calculateOutputPI(PI_t *pi, double y, double yref)
