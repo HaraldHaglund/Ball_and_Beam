@@ -1,2 +1,0 @@
-Integrate shutdown from the GUI to run appropriate code for shutdown to happen in regulator
-in main create structs in shared memory: MeasurementData_t, ControlData_t, PI_t, PID_t, ModeMonitor_t, ReferenceGenerator_t
