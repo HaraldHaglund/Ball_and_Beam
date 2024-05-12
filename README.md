@@ -1,6 +1,6 @@
 # README
 
-## Starting Regulation
+## Starting the program
 
 **Setup:**
 1. Run `make all` from the makefile located in `/src`. This compiles all necessary libraries and executables in the `/bin` folder.
@@ -10,6 +10,15 @@
 
 **Stopping:**
 - To terminate regulation and all associated threads, simply click the stop button in the GUI. This action closes the GUI and stops the regulation.
+
+---
+
+## Using the program
+
+**GUI:**
+1. Inner and outer parameters can be set and applied on the left hand side of the UI.You can also choose if you want to control the beam or the ball. 
+2. In the middle you can see the plots consisting of reference (black line), output signal (red line) and control signal (blue line). The reference can be adjusted on the right hand side. 
+3. There is a slider for the manual setting, along with an amplitude, period, and max ctrl for the square/time optimal reference. 
 
 ---
 
