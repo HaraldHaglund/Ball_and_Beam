@@ -1,5 +1,9 @@
 # README
 
+## Video of the result
+GUI: https://www.youtube.com/watch?v=hf45A2fWMyA&lc=UgwT_Cos2LUpyU3EbNJ4AaABAg
+Ball: https://www.youtube.com/watch?v=Gw0yF0R8S4k&lc=UgxZ6DAxJitDFiHi4_R4AaABAg
+
 ## Starting the program
 
 **Setup:**
